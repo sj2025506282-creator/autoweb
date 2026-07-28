@@ -4,7 +4,7 @@ compatibility_date = "2025-07-28"
 [[d1_databases]]
 binding = "DB"
 database_name = "autoweb-db"
-database_id = ""
+database_id = "local-dev"
 
 [[r2_buckets]]
 binding = "IMAGES"
