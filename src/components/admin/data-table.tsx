@@ -1,10 +1,11 @@
+"use client";
 interface Column<T> {
   key: string;
   header: string;
   render?: (item: T) => React.ReactNode;
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T>({
   columns, data, onRowClick
 }: {
   columns: Column<T>[];
@@ -27,7 +28,7 @@ export function DataTable<T extends Record<string, unknown>>({
               className={onRowClick ? "cursor-pointer hover:bg-gray-50" : ""}>
               {columns.map((col) => (
                 <td key={col.key} className="px-4 py-3 text-sm">
-                  {col.render ? col.render(item) : String(item[col.key] ?? "")}
+                  {col.render ? col.render(item) : String((item as Record<string, unknown>)[col.key] ?? "")}
                 </td>
               ))}
             </tr>
