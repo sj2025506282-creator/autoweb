@@ -1,14 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/admin/data-table";
-
-interface Restaurant {
-  id: string;
-  name: string;
-  slug: string;
-  status: string;
-  created_at: string;
-}
+import type { Restaurant } from "@/types";
 
 export function RestaurantsTable({ restaurants }: { restaurants: Restaurant[] }) {
   const router = useRouter();

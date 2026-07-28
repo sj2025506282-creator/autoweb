@@ -142,7 +142,7 @@ export function RestaurantForm({ initialData, mode }: RestaurantFormProps) {
       </div>
 
       {/* Phone & Email (side by side) */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
             Phone
@@ -206,7 +206,7 @@ export function RestaurantForm({ initialData, mode }: RestaurantFormProps) {
       </div>
 
       {/* Status & Template (side by side) */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
           <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
             Status

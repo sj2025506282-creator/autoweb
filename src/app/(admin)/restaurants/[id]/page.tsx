@@ -1,17 +1,7 @@
 import { queryFirst } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { RestaurantForm } from "../restaurant-form";
-
-interface Restaurant {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  address: string;
-  description: string;
-  status: string;
-  template_id: string;
-}
+import type { Restaurant } from "@/types";
 
 export default async function EditRestaurantPage({
   params,

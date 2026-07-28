@@ -1,14 +1,7 @@
 import Link from "next/link";
 import { queryAll } from "@/lib/db";
 import { RestaurantsTable } from "./restaurants-table";
-
-interface Restaurant {
-  id: string;
-  name: string;
-  slug: string;
-  status: string;
-  created_at: string;
-}
+import type { Restaurant } from "@/types";
 
 export default async function RestaurantsPage() {
   const restaurants = await queryAll<Restaurant>(
