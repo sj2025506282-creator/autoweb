@@ -1,0 +1,11 @@
+name = "autoweb"
+compatibility_date = "2025-07-28"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "autoweb-db"
+database_id = ""
+
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "autoweb-images"
