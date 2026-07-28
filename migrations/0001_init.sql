@@ -87,3 +87,7 @@ INSERT INTO templates (id, name, config) VALUES
   ('template-3', 'Warm Rustic', '{"primaryColor":"#8b4513","secondaryColor":"#f4a460","fontFamily":"serif","layout":"hero-first"}'),
   ('template-4', 'Fresh Green', '{"primaryColor":"#2d5016","secondaryColor":"#7ec850","fontFamily":"sans-serif","layout":"split"}'),
   ('template-5', 'Bold Dark', '{"primaryColor":"#0a0a0a","secondaryColor":"#ff6b35","fontFamily":"sans-serif","layout":"full-bleed"}');
+
+-- Seed admin user (password: 'password' — change on first login)
+INSERT OR IGNORE INTO users (id, email, password_hash, role)
+VALUES ('admin-001', 'admin@autoweb.app', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 'admin');
