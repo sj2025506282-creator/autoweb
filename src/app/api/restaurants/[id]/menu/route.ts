@@ -98,6 +98,21 @@ export async function POST(
         { status: 400 }
       );
     }
+
+    // Verify the category belongs to this restaurant
+    const category = await db
+      .prepare(
+        "SELECT id FROM menu_categories WHERE id = ? AND restaurant_id = ?"
+      )
+      .bind(body.category_id as string, id)
+      .first();
+    if (!category) {
+      return NextResponse.json(
+        { error: "Category not found" },
+        { status: 400 }
+      );
+    }
+
     const itemId = uuid();
     await db
       .prepare(
@@ -134,7 +149,12 @@ export async function DELETE(
   const db = getDB();
 
   if (itemId) {
-    await db.prepare("DELETE FROM menu_items WHERE id = ?").bind(itemId).run();
+    await db
+      .prepare(
+        "DELETE FROM menu_items WHERE id = ? AND category_id IN (SELECT id FROM menu_categories WHERE restaurant_id = ?)"
+      )
+      .bind(itemId, id)
+      .run();
     return NextResponse.json({ success: true });
   }
 
