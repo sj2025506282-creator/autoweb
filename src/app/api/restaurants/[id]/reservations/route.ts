@@ -12,6 +12,10 @@ export async function GET(
   }
 
   const { id } = await params;
+
+  if (user.role !== "admin" && user.restaurantId !== id) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
   const { searchParams } = request.nextUrl;
   const date = searchParams.get("date");
 
