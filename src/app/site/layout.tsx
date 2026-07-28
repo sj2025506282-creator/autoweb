@@ -1,6 +1,21 @@
+import type { Metadata } from "next";
 import { getRestaurantFromHost } from "@/lib/site-utils";
+import { generateMetadata as buildMetadata, generateRestaurantSchema } from "@/lib/seo";
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const restaurant = await getRestaurantFromHost();
+
+  if (!restaurant) {
+    return {
+      title: "Restaurant Not Found",
+      description: "The restaurant site you are looking for does not exist.",
+    };
+  }
+
+  return buildMetadata(restaurant);
+}
 
 export default async function SiteLayout({
   children,
@@ -22,8 +37,14 @@ export default async function SiteLayout({
     );
   }
 
+  const schema = generateRestaurantSchema(restaurant);
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
       <Navbar restaurantName={restaurant.name} />
       <main className="flex-1">{children}</main>
       <Footer restaurantName={restaurant.name} address={restaurant.address} />
