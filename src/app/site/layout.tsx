@@ -3,6 +3,7 @@ import { getRestaurantFromHost } from "@/lib/site-utils";
 import { generateMetadata as buildMetadata, generateRestaurantSchema } from "@/lib/seo";
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
+import { AnalyticsTracker } from "@/components/site/analytics-tracker";
 
 export async function generateMetadata(): Promise<Metadata> {
   const restaurant = await getRestaurantFromHost();
@@ -48,6 +49,7 @@ export default async function SiteLayout({
       <Navbar restaurantName={restaurant.name} />
       <main className="flex-1">{children}</main>
       <Footer restaurantName={restaurant.name} address={restaurant.address} />
+      <AnalyticsTracker restaurantId={restaurant.id} />
     </div>
   );
 }
