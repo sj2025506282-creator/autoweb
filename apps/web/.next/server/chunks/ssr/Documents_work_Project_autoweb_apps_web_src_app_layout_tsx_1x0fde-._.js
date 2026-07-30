@@ -1,0 +1,3 @@
+module.exports=[78352,a=>{"use strict";var b=a.i(468);a.s(["default",0,function({children:a}){return(0,b.jsx)("html",{lang:"en",children:(0,b.jsx)("body",{className:"antialiased",children:a})})},"metadata",0,{title:"AutoWeb - Restaurant Website Generator",description:"Beautiful restaurant websites, automatically generated"}])},77721,a=>{a.n(a.i(78352))}];
+
+//# sourceMappingURL=Documents_work_Project_autoweb_apps_web_src_app_layout_tsx_1x0fde-._.js.map

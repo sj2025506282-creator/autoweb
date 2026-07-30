@@ -1,0 +1,23 @@
+{
+  "name": "@autoweb/api",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "wrangler deploy --dry-run",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@autoweb/shared": "workspace:*",
+    "hono": "^4",
+    "@hono/zod-validator": "^0.4",
+    "zod": "^3",
+    "resend": "^6",
+    "uuid": "^14",
+    "jose": "^5"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5",
+    "wrangler": "^3",
+    "typescript": "^5"
+  }
+}

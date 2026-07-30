@@ -1,0 +1,248 @@
+[
+  {
+    "route": "/restaurants/[id]/menu",
+    "firstLoadUncompressedJsBytes": 533611,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/3xin3nqvi7803.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/outreach",
+    "firstLoadUncompressedJsBytes": 529974,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/3qrz2cgc51v8a.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/site/reserve",
+    "firstLoadUncompressedJsBytes": 528270,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/0_arosjt83b2t.js",
+      ".next/static/chunks/19w0lveq7ioz7.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/restaurants/[id]",
+    "firstLoadUncompressedJsBytes": 528269,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/0uy7t55r-wt7n.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/restaurants/new",
+    "firstLoadUncompressedJsBytes": 528269,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/0uy7t55r-wt7n.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/restaurants/[id]/reservations",
+    "firstLoadUncompressedJsBytes": 526993,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/0-u6p1bcrxkqr.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/outreach/review",
+    "firstLoadUncompressedJsBytes": 526499,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/3t2nlvo5kmtbc.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/login",
+    "firstLoadUncompressedJsBytes": 524078,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/39odnq2nixast.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/restaurants",
+    "firstLoadUncompressedJsBytes": 523777,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/2ckk1pvulg3bc.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/site",
+    "firstLoadUncompressedJsBytes": 522654,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/0_arosjt83b2t.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/site/contact",
+    "firstLoadUncompressedJsBytes": 522654,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/0_arosjt83b2t.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/site/menu",
+    "firstLoadUncompressedJsBytes": 522654,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/0_arosjt83b2t.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/",
+    "firstLoadUncompressedJsBytes": 522425,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/restaurants/[id]/analytics",
+    "firstLoadUncompressedJsBytes": 522425,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/settings",
+    "firstLoadUncompressedJsBytes": 522425,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/templates",
+    "firstLoadUncompressedJsBytes": 522425,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/3m5k_4z4zk818.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  },
+  {
+    "route": "/_not-found",
+    "firstLoadUncompressedJsBytes": 514911,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/2q13eat4p0ja-.js",
+      ".next/static/chunks/15t90xnvd0gnf.js",
+      ".next/static/chunks/2r10wbnv5lnu9.js",
+      ".next/static/chunks/2ul246hrf07s4.js",
+      ".next/static/chunks/25s6to9ua9iou.js",
+      ".next/static/chunks/3np2n6y518gtz.js",
+      ".next/static/chunks/turbopack-27n248m_v3n9o.js"
+    ]
+  }
+]

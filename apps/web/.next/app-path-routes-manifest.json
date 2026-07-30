@@ -1,0 +1,23 @@
+{
+  "/(admin)/login/page": "/login",
+  "/(admin)/outreach/page": "/outreach",
+  "/(admin)/outreach/review/page": "/outreach/review",
+  "/(admin)/page": "/",
+  "/(admin)/restaurants/[id]/analytics/page": "/restaurants/[id]/analytics",
+  "/(admin)/restaurants/[id]/menu/page": "/restaurants/[id]/menu",
+  "/(admin)/restaurants/[id]/page": "/restaurants/[id]",
+  "/(admin)/restaurants/[id]/reservations/page": "/restaurants/[id]/reservations",
+  "/(admin)/restaurants/new/page": "/restaurants/new",
+  "/(admin)/restaurants/page": "/restaurants",
+  "/(admin)/settings/page": "/settings",
+  "/(admin)/templates/page": "/templates",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/robots.txt/route": "/robots.txt",
+  "/site/contact/page": "/site/contact",
+  "/site/menu/page": "/site/menu",
+  "/site/page": "/site",
+  "/site/reserve/page": "/site/reserve",
+  "/sitemap.xml/route": "/sitemap.xml"
+}

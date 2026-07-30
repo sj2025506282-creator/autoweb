@@ -1,0 +1,23 @@
+{
+  "/(admin)/login/page": "app/(admin)/login/page.js",
+  "/(admin)/outreach/page": "app/(admin)/outreach/page.js",
+  "/(admin)/outreach/review/page": "app/(admin)/outreach/review/page.js",
+  "/(admin)/page": "app/(admin)/page.js",
+  "/(admin)/restaurants/[id]/analytics/page": "app/(admin)/restaurants/[id]/analytics/page.js",
+  "/(admin)/restaurants/[id]/menu/page": "app/(admin)/restaurants/[id]/menu/page.js",
+  "/(admin)/restaurants/[id]/page": "app/(admin)/restaurants/[id]/page.js",
+  "/(admin)/restaurants/[id]/reservations/page": "app/(admin)/restaurants/[id]/reservations/page.js",
+  "/(admin)/restaurants/new/page": "app/(admin)/restaurants/new/page.js",
+  "/(admin)/restaurants/page": "app/(admin)/restaurants/page.js",
+  "/(admin)/settings/page": "app/(admin)/settings/page.js",
+  "/(admin)/templates/page": "app/(admin)/templates/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/robots.txt/route": "app/robots.txt/route.js",
+  "/site/contact/page": "app/site/contact/page.js",
+  "/site/menu/page": "app/site/menu/page.js",
+  "/site/page": "app/site/page.js",
+  "/site/reserve/page": "app/site/reserve/page.js",
+  "/sitemap.xml/route": "app/sitemap.xml/route.js"
+}
