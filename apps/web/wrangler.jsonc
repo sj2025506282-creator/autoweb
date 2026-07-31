@@ -10,6 +10,12 @@
     "NEXT_PUBLIC_MAIN_DOMAIN": "autoweb-web.sj2025506282.workers.dev",
     "NEXT_PUBLIC_BASE_URL": "https://autoweb-web.sj2025506282.workers.dev"
   },
+  "services": [
+    {
+      "binding": "API",
+      "service": "autoweb-api"
+    }
+  ],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",

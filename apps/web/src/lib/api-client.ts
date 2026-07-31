@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers'
+import { fetchApi } from './api-transport'
 
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:8787'
 
@@ -11,7 +12,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
   const allCookies = cookieStore.getAll()
   const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ')
 
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await fetchApi(`${API_BASE}${path}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',

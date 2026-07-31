@@ -1,3 +1,5 @@
+import { fetchApi } from '@/lib/api-transport'
+
 const API_BASE_URL = (
   process.env.API_BASE_URL || 'http://localhost:8787'
 ).replace(/\/$/, '')
@@ -19,7 +21,7 @@ async function proxyRequest(
   headers.delete('host')
   headers.delete('content-length')
 
-  return fetch(targetUrl, {
+  return fetchApi(targetUrl, {
     method: request.method,
     headers,
     body: request.method === 'GET' || request.method === 'HEAD'
