@@ -125,7 +125,7 @@ describe('feature: authentication and password lifecycle', () => {
     const row = await env.DB.prepare(
       'SELECT password_hash FROM users WHERE id = ?',
     ).bind(ADMIN.id).first<{ password_hash: string }>()
-    expect(row?.password_hash).toMatch(/^pbkdf2\$210000\$/)
+    expect(row?.password_hash).toMatch(/^pbkdf2\$100000\$/)
     await expect(verifyPassword('NewStrongPass123', row!.password_hash)).resolves.toBe(true)
     expect((await login(ADMIN.email, 'NewStrongPass123')).status).toBe(200)
   })

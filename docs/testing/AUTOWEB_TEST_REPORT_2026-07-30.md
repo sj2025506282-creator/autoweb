@@ -31,6 +31,7 @@
 | BUG-AUTH-001 | P1 | JWT 签名有效时未校验载荷字段和角色枚举 | 签名正确但角色非法的 token 可被解析 | 严格校验 subject、email、role、restaurantId | CLOSED |
 | BUG-OUT-003 | P1 | 并发审核可能重复发送外联邮件 | 两个请求均可通过先查后改窗口 | 数据库原子认领审核权，并发请求返回 409 | CLOSED |
 | BUG-OUT-004 | P1 | 并发导入相同 Google Place 时应用层查重存在竞态 | 并发请求可同时通过预检查 | 保留数据库唯一索引并将唯一约束冲突映射为 409 | CLOSED |
+| BUG-AUTH-002 | P1 | Cloudflare 生产运行时拒绝超过 100,000 次的 PBKDF2 | 线上修改密码返回 500，Worker 日志报告迭代数超限 | 使用平台支持上限 100,000 次并保留独立向量和篡改测试 | CLOSED |
 
 ## 验证命令
 
