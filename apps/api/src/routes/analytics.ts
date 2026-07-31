@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import { jwtAuth } from '../middleware/auth'
+import { jwtAuth, restaurantAccess } from '../middleware/auth'
 import { trackPageView, getAnalyticsStats } from '../services/analytics'
 import { checkRateLimit } from '../services/rate-limiter'
 import { v4 as uuid } from 'uuid'
@@ -32,12 +32,19 @@ app.post('/track', zValidator('json', trackSchema), async (c) => {
   // Use provided visitorId or generate a new one
   const visitorId = body.visitorId || uuid()
 
+  const restaurant = await c.env.DB.prepare(
+    "SELECT id FROM restaurants WHERE id = ? AND status IN ('active','demo')"
+  ).bind(body.restaurantId).first()
+  if (!restaurant) {
+    return c.json({ error: 'Restaurant not found' }, 404)
+  }
+
   await trackPageView(c.env.DB, body.restaurantId, body.page, visitorId, body.referrer || '')
   return c.json({ success: true, visitorId })
 })
 
 // GET /:id/stats — get analytics stats for a restaurant
-app.get('/:id/stats', jwtAuth, async (c) => {
+app.get('/:id/stats', jwtAuth, restaurantAccess, async (c) => {
   const id = c.req.param('id')
   const stats = await getAnalyticsStats(c.env.DB, id)
   return c.json(stats)

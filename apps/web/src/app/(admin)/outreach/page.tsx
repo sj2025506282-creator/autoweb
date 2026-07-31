@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface MenuItemInput {
@@ -7,27 +8,99 @@ interface MenuItemInput {
   price: string;
 }
 
+interface PlaceLead {
+  placeId: string;
+  name: string;
+  address: string;
+  phone: string;
+  website: string;
+  googleMapsUrl: string;
+  lat: number;
+  lng: number;
+  rating: number | null;
+  reviewCount: number;
+  businessStatus: string;
+  hasWebsite: boolean;
+}
+
+const emptyForm = {
+  name: "",
+  phone: "",
+  email: "",
+  address: "",
+  description: "",
+  lat: "",
+  lng: "",
+  imageUrl: "",
+  googlePlaceId: "",
+  sourceUrl: "",
+};
+
 export default function OutreachPage() {
   const router = useRouter();
-
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    address: "",
-    description: "",
-    lat: "",
-    lng: "",
-    imageUrl: "",
-  });
+  const [query, setQuery] = useState("");
+  const [places, setPlaces] = useState<PlaceLead[]>([]);
+  const [showAll, setShowAll] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState("");
+  const [hasSearched, setHasSearched] = useState(false);
+  const [form, setForm] = useState(emptyForm);
   const [menuItems, setMenuItems] = useState<MenuItemInput[]>([
     { name: "", price: "" },
   ]);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function updateField(field: string, value: string) {
+  const visiblePlaces = useMemo(
+    () => showAll ? places : places.filter((place) => !place.hasWebsite),
+    [places, showAll],
+  );
+  const noWebsiteCount = places.filter((place) => !place.hasWebsite).length;
+
+  function updateField(field: keyof typeof emptyForm, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
+  }
+
+  async function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (searching || query.trim().length < 3) return;
+    setSearching(true);
+    setSearchError("");
+    setHasSearched(true);
+    try {
+      const res = await fetch(`/api/outreach/search?q=${encodeURIComponent(query.trim())}&limit=20`);
+      const data = await res.json().catch(() => ({ error: "Search request failed" }));
+      if (!res.ok) {
+        setPlaces([]);
+        setSearchError((data as { error?: string }).error || "Restaurant search failed.");
+        return;
+      }
+      setPlaces((data as { places: PlaceLead[] }).places);
+    } catch {
+      setPlaces([]);
+      setSearchError("Network error. Please try again.");
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  function selectPlace(place: PlaceLead) {
+    setForm((prev) => ({
+      ...prev,
+      name: place.name,
+      phone: place.phone,
+      address: place.address,
+      lat: place.lat ? String(place.lat) : "",
+      lng: place.lng ? String(place.lng) : "",
+      googlePlaceId: place.placeId,
+      sourceUrl: place.googleMapsUrl,
+      description: prev.description || `${place.name} is a restaurant located at ${place.address}.`,
+    }));
+    setError("");
+    document.getElementById("restaurant-details")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   }
 
   function updateMenuItem(index: number, field: keyof MenuItemInput, value: string) {
@@ -50,7 +123,6 @@ export default function OutreachPage() {
     e.preventDefault();
     if (isSubmitting) return;
     setError("");
-
     if (!form.name.trim()) {
       setError("Restaurant name is required.");
       return;
@@ -58,36 +130,34 @@ export default function OutreachPage() {
 
     setIsSubmitting(true);
     try {
-      const body = {
-        name: form.name.trim(),
-        phone: form.phone.trim(),
-        email: form.email.trim(),
-        address: form.address.trim(),
-        description: form.description.trim(),
-        lat: parseFloat(form.lat) || 0,
-        lng: parseFloat(form.lng) || 0,
-        imageUrls: form.imageUrl.trim() ? [form.imageUrl.trim()] : [],
-        menuItems: menuItems
-          .filter((m) => m.name.trim())
-          .map((m) => ({
-            name: m.name.trim(),
-            price: parseFloat(m.price) || 0,
-          })),
-      };
-
       const res = await fetch("/api/outreach", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          name: form.name.trim(),
+          phone: form.phone.trim(),
+          email: form.email.trim(),
+          address: form.address.trim(),
+          description: form.description.trim(),
+          lat: parseFloat(form.lat) || 0,
+          lng: parseFloat(form.lng) || 0,
+          imageUrls: form.imageUrl.trim() ? [form.imageUrl.trim()] : [],
+          googlePlaceId: form.googlePlaceId || undefined,
+          sourceUrl: form.sourceUrl,
+          menuItems: menuItems
+            .filter((item) => item.name.trim())
+            .map((item) => ({
+              name: item.name.trim(),
+              price: parseFloat(item.price) || 0,
+            })),
+        }),
       });
-
-      if (res.ok) {
-        const data = (await res.json()) as { id: string; slug: string };
-        router.push(`/outreach/review?generated=${data.id}`);
-      } else {
-        const data = await res.json().catch(() => ({ error: "Request failed" }));
-        setError((data as { error?: string }).error ?? "Failed to generate demo site");
+      const data = await res.json().catch(() => ({ error: "Request failed" }));
+      if (!res.ok) {
+        setError((data as { error?: string }).error || "Failed to generate demo site.");
+        return;
       }
+      router.push(`/outreach/review?generated=${(data as { id: string }).id}`);
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -96,240 +166,216 @@ export default function OutreachPage() {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h2 className="text-xl font-bold">Outreach</h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Search for restaurants and generate demo sites to send for outreach.
-          </p>
-        </div>
+    <div className="max-w-6xl">
+      <div className="mb-6">
+        <h2 className="text-xl font-bold">Outreach</h2>
+        <p className="text-sm text-gray-500 mt-1">
+          Find restaurants without a website, review their details, and generate a demo.
+        </p>
       </div>
 
-      {/* Google Maps Search Placeholder */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-        <h3 className="text-lg font-semibold mb-2">Search Restaurants</h3>
-        <p className="text-sm text-gray-500 mb-3">
-          Google Maps integration coming soon. For now, manually enter restaurant details below.
+      <section className="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h3 className="text-lg font-semibold mb-1">Find restaurant leads</h3>
+        <p className="text-sm text-gray-500 mb-4">
+          Use a specific query such as “Italian restaurants in Austin, Texas”.
         </p>
-        <div className="flex gap-3">
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
           <input
-            type="text"
-            placeholder="Search by name or location..."
-            className="flex-1 p-2 border rounded bg-gray-50 text-gray-400"
-            disabled
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Restaurant type and city"
+            minLength={3}
+            required
+            className="flex-1 p-2.5 border rounded"
+            disabled={searching}
           />
           <button
-            type="button"
-            className="px-4 py-2 bg-gray-300 text-gray-500 rounded cursor-not-allowed"
-            disabled
+            type="submit"
+            disabled={searching || query.trim().length < 3}
+            className="px-5 py-2.5 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300"
           >
-            Search
+            {searching ? "Searching…" : "Search Google Maps"}
           </button>
-        </div>
-      </div>
+        </form>
 
-      {/* Manual Input Form */}
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md max-w-3xl">
-        <h3 className="text-lg font-semibold mb-4">Restaurant Details</h3>
+        {searchError && (
+          <p className="mt-4 p-3 rounded bg-red-50 text-red-700 text-sm">{searchError}</p>
+        )}
 
-        {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
-
-        {/* Name */}
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Restaurant Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="name"
-            type="text"
-            value={form.name}
-            onChange={(e) => updateField("name", e.target.value)}
-            className="w-full p-2 border rounded disabled:bg-gray-50 disabled:text-gray-400"
-            required
-            disabled={isSubmitting}
-            placeholder="e.g. Joe's Italian Bistro"
-          />
-        </div>
-
-        {/* Phone & Email */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-              Phone
-            </label>
-            <input
-              id="phone"
-              type="tel"
-              value={form.phone}
-              onChange={(e) => updateField("phone", e.target.value)}
-              className="w-full p-2 border rounded disabled:bg-gray-50 disabled:text-gray-400"
-              disabled={isSubmitting}
-              placeholder="+1 (555) 000-0000"
-            />
+        {places.length > 0 && (
+          <div className="mt-5">
+            <p className="text-xs text-gray-500 mb-3">
+              Search results provided by Google. Verify imported business details before outreach.
+            </p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+              <p className="text-sm text-gray-600">
+                Found {places.length} restaurants; {noWebsiteCount} have no listed website.
+              </p>
+              <label className="flex items-center gap-2 text-sm text-gray-600">
+                <input
+                  type="checkbox"
+                  checked={showAll}
+                  onChange={(e) => setShowAll(e.target.checked)}
+                />
+                Show restaurants that already have a website
+              </label>
+            </div>
+            <div className="grid md:grid-cols-2 gap-3">
+              {visiblePlaces.map((place) => (
+                <article key={place.placeId} className="border rounded-lg p-4">
+                  <div className="flex justify-between gap-3">
+                    <div className="min-w-0">
+                      <h4 className="font-semibold truncate">{place.name}</h4>
+                      <p className="text-sm text-gray-500 mt-1">{place.address || "No address listed"}</p>
+                    </div>
+                    <span className={`h-fit text-xs px-2 py-1 rounded-full whitespace-nowrap ${
+                      place.hasWebsite
+                        ? "bg-gray-100 text-gray-600"
+                        : "bg-green-100 text-green-700"
+                    }`}>
+                      {place.hasWebsite ? "Has website" : "No website"}
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-3 flex flex-wrap gap-x-3 gap-y-1">
+                    <span>{place.phone || "No phone"}</span>
+                    {place.rating !== null && (
+                      <span>★ {place.rating} ({place.reviewCount})</span>
+                    )}
+                    {place.googleMapsUrl && (
+                      <a
+                        href={place.googleMapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        Open in Google Maps
+                      </a>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => selectPlace(place)}
+                    className="mt-4 text-sm px-4 py-2 bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
+                  >
+                    Use this restaurant
+                  </button>
+                </article>
+              ))}
+            </div>
           </div>
+        )}
+
+        {hasSearched && !searching && !searchError && visiblePlaces.length === 0 && (
+          <p className="mt-4 p-3 rounded bg-amber-50 text-amber-800 text-sm">
+            No restaurants without a listed website were found. Enable “Show restaurants that
+            already have a website” or try a more specific query.
+          </p>
+        )}
+      </section>
+
+      <form
+        id="restaurant-details"
+        onSubmit={handleSubmit}
+        className="bg-white p-6 sm:p-8 rounded-lg shadow-md max-w-3xl scroll-mt-6"
+      >
+        <div className="flex items-center justify-between gap-3 mb-5">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={form.email}
-              onChange={(e) => updateField("email", e.target.value)}
-              className="w-full p-2 border rounded disabled:bg-gray-50 disabled:text-gray-400"
-              disabled={isSubmitting}
-              placeholder="restaurant@example.com"
-            />
+            <h3 className="text-lg font-semibold">Restaurant details</h3>
+            <p className="text-sm text-gray-500">Review and complete the information before generating.</p>
           </div>
-        </div>
-
-        {/* Address */}
-        <div className="mb-4">
-          <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-            Address
-          </label>
-          <input
-            id="address"
-            type="text"
-            value={form.address}
-            onChange={(e) => updateField("address", e.target.value)}
-            className="w-full p-2 border rounded disabled:bg-gray-50 disabled:text-gray-400"
-            disabled={isSubmitting}
-            placeholder="123 Main St, City, State"
-          />
-        </div>
-
-        {/* Description */}
-        <div className="mb-4">
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-            Description
-          </label>
-          <textarea
-            id="description"
-            value={form.description}
-            onChange={(e) => updateField("description", e.target.value)}
-            className="w-full p-2 border rounded disabled:bg-gray-50 disabled:text-gray-400"
-            rows={3}
-            disabled={isSubmitting}
-            placeholder="A short description of the restaurant"
-          />
-        </div>
-
-        {/* Lat & Lng */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label htmlFor="lat" className="block text-sm font-medium text-gray-700 mb-1">
-              Latitude
-            </label>
-            <input
-              id="lat"
-              type="number"
-              step="any"
-              value={form.lat}
-              onChange={(e) => updateField("lat", e.target.value)}
-              className="w-full p-2 border rounded disabled:bg-gray-50 disabled:text-gray-400"
-              disabled={isSubmitting}
-              placeholder="40.7128"
-            />
-          </div>
-          <div>
-            <label htmlFor="lng" className="block text-sm font-medium text-gray-700 mb-1">
-              Longitude
-            </label>
-            <input
-              id="lng"
-              type="number"
-              step="any"
-              value={form.lng}
-              onChange={(e) => updateField("lng", e.target.value)}
-              className="w-full p-2 border rounded disabled:bg-gray-50 disabled:text-gray-400"
-              disabled={isSubmitting}
-              placeholder="-74.0060"
-            />
-          </div>
-        </div>
-
-        {/* Cover Image URL */}
-        <div className="mb-6">
-          <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">
-            Cover Image URL
-          </label>
-          <input
-            id="imageUrl"
-            type="url"
-            value={form.imageUrl}
-            onChange={(e) => updateField("imageUrl", e.target.value)}
-            className="w-full p-2 border rounded disabled:bg-gray-50 disabled:text-gray-400"
-            disabled={isSubmitting}
-            placeholder="https://example.com/image.jpg"
-          />
-        </div>
-
-        {/* Menu Items */}
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-2">
-            <label className="block text-sm font-medium text-gray-700">Menu Items</label>
+          {form.googlePlaceId && (
             <button
               type="button"
-              onClick={addMenuItem}
-              disabled={isSubmitting}
-              className="text-sm text-blue-600 hover:text-blue-800 disabled:text-gray-400"
+              onClick={() => setForm(emptyForm)}
+              className="text-sm text-gray-500 hover:text-gray-800"
             >
-              + Add Item
+              Clear selection
             </button>
+          )}
+        </div>
+
+        {error && <p className="mb-4 p-3 rounded bg-red-50 text-red-700 text-sm">{error}</p>}
+
+        <div className="mb-4">
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            Restaurant name <span className="text-red-500">*</span>
+          </label>
+          <input id="name" value={form.name} onChange={(e) => updateField("name", e.target.value)}
+            className="w-full p-2 border rounded" required disabled={isSubmitting} />
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-4 mb-4">
+          <label className="text-sm font-medium text-gray-700">
+            Phone
+            <input type="tel" value={form.phone} onChange={(e) => updateField("phone", e.target.value)}
+              className="block w-full p-2 border rounded mt-1" disabled={isSubmitting} />
+          </label>
+          <label className="text-sm font-medium text-gray-700">
+            Outreach email
+            <input type="email" value={form.email} onChange={(e) => updateField("email", e.target.value)}
+              className="block w-full p-2 border rounded mt-1" disabled={isSubmitting}
+              placeholder="Add manually before sending" />
+          </label>
+        </div>
+
+        <label className="block text-sm font-medium text-gray-700 mb-4">
+          Address
+          <input value={form.address} onChange={(e) => updateField("address", e.target.value)}
+            className="block w-full p-2 border rounded mt-1" disabled={isSubmitting} />
+        </label>
+
+        <label className="block text-sm font-medium text-gray-700 mb-4">
+          Description
+          <textarea value={form.description} onChange={(e) => updateField("description", e.target.value)}
+            className="block w-full p-2 border rounded mt-1" rows={3} disabled={isSubmitting} />
+        </label>
+
+        <div className="grid sm:grid-cols-2 gap-4 mb-4">
+          <label className="text-sm font-medium text-gray-700">
+            Latitude
+            <input type="number" step="any" value={form.lat} onChange={(e) => updateField("lat", e.target.value)}
+              className="block w-full p-2 border rounded mt-1" disabled={isSubmitting} />
+          </label>
+          <label className="text-sm font-medium text-gray-700">
+            Longitude
+            <input type="number" step="any" value={form.lng} onChange={(e) => updateField("lng", e.target.value)}
+              className="block w-full p-2 border rounded mt-1" disabled={isSubmitting} />
+          </label>
+        </div>
+
+        <label className="block text-sm font-medium text-gray-700 mb-6">
+          Cover image URL
+          <input type="url" value={form.imageUrl} onChange={(e) => updateField("imageUrl", e.target.value)}
+            className="block w-full p-2 border rounded mt-1" disabled={isSubmitting}
+            placeholder="Optional licensed image URL" />
+        </label>
+
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-medium text-gray-700">Menu items</span>
+            <button type="button" onClick={addMenuItem} disabled={isSubmitting}
+              className="text-sm text-blue-600 hover:text-blue-800">+ Add item</button>
           </div>
-          {menuItems.map((item, i) => (
-            <div key={i} className="flex gap-3 mb-2 items-start">
-              <input
-                type="text"
-                value={item.name}
-                onChange={(e) => updateMenuItem(i, "name", e.target.value)}
-                className="flex-1 p-2 border rounded disabled:bg-gray-50 disabled:text-gray-400"
-                disabled={isSubmitting}
-                placeholder="Item name"
-              />
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                value={item.price}
-                onChange={(e) => updateMenuItem(i, "price", e.target.value)}
-                className="w-24 p-2 border rounded disabled:bg-gray-50 disabled:text-gray-400"
-                disabled={isSubmitting}
-                placeholder="Price"
-              />
+          {menuItems.map((item, index) => (
+            <div key={index} className="flex gap-3 mb-2 items-start">
+              <input value={item.name} onChange={(e) => updateMenuItem(index, "name", e.target.value)}
+                className="flex-1 p-2 border rounded" disabled={isSubmitting} placeholder="Item name" />
+              <input type="number" min="0" step="0.01" value={item.price}
+                onChange={(e) => updateMenuItem(index, "price", e.target.value)}
+                className="w-24 p-2 border rounded" disabled={isSubmitting} placeholder="Price" />
               {menuItems.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeMenuItem(i)}
-                  disabled={isSubmitting}
-                  className="p-2 text-red-500 hover:text-red-700 disabled:text-gray-300"
-                  aria-label="Remove item"
-                >
-                  ✕
-                </button>
+                <button type="button" onClick={() => removeMenuItem(index)}
+                  className="p-2 text-red-500" aria-label="Remove item">✕</button>
               )}
             </div>
           ))}
         </div>
 
-        {/* Actions */}
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            disabled={isSubmitting}
-            className="px-4 py-2 border rounded text-gray-700 hover:bg-gray-50 disabled:text-gray-300"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Generating…" : "Generate Demo Site"}
+        <div className="flex justify-end">
+          <button type="submit" disabled={isSubmitting}
+            className="bg-blue-600 text-white px-6 py-2.5 rounded hover:bg-blue-700 disabled:bg-blue-300">
+            {isSubmitting ? "Generating…" : "Generate demo site"}
           </button>
         </div>
       </form>

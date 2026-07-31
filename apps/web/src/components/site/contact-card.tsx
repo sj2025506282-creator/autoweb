@@ -42,7 +42,7 @@ export function ContactCard({ restaurant }: { restaurant: Restaurant }) {
             style={{ minHeight: "300px", border: 0 }}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            src={`https://www.openstreetmap.org/export/embed.html?bbox=${restaurant.lng - 0.005}%2C${restaurant.lat - 0.005}%2C${restaurant.lng + 0.005}%2C${restaurant.lat + 0.005}&layer=mapnik&marker=${restaurant.lat}%2C${restaurant.lng}`}
+            src={`https://www.google.com/maps?q=${restaurant.lat},${restaurant.lng}&output=embed`}
           />
         </div>
       )}
@@ -54,6 +54,16 @@ export function ContactCard({ restaurant }: { restaurant: Restaurant }) {
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Address</h3>
             <p className="text-gray-600 leading-relaxed">{restaurant.address}</p>
+            {restaurant.source_url && (
+              <a
+                href={restaurant.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-block text-sm text-blue-600 hover:text-blue-800"
+              >
+                View on Google Maps
+              </a>
+            )}
           </div>
         )}
 

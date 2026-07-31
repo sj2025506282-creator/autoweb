@@ -1,5 +1,11 @@
 name = "autoweb-api"
+main = "src/index.ts"
 compatibility_date = "2025-07-28"
+
+# Configure production secrets with:
+# pnpm wrangler secret put JWT_SECRET
+# pnpm wrangler secret put RESEND_API_KEY
+# pnpm wrangler secret put GOOGLE_PLACES_API_KEY
 
 [[d1_databases]]
 binding = "DB"

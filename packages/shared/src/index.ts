@@ -12,6 +12,9 @@ export interface Restaurant {
   opening_hours: string;
   cover_image: string;
   description: string;
+  google_place_id?: string;
+  source_url?: string;
+  outreach_sent_at?: string | null;
   template_id: string;
   domain_custom: string;
   status: 'draft' | 'active' | 'demo';

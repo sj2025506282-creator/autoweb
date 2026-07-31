@@ -9,7 +9,7 @@ export function Header({ user }: { user: SessionUser }) {
     router.push("/login");
   }
   return (
-    <header className="h-14 bg-white border-b flex items-center justify-between px-6">
+    <header className="flex h-14 flex-shrink-0 items-center justify-between border-b bg-white px-4 sm:px-6">
       <h1 className="font-semibold text-gray-700">Dashboard</h1>
       <div className="flex items-center gap-4">
         <span className="text-sm text-gray-500">{user.role}</span>

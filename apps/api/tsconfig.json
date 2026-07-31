@@ -12,5 +12,6 @@
     "paths": {
       "@autoweb/shared": ["../../packages/shared/src"]
     }
-  }
+  },
+  "exclude": ["test", "vitest.config.ts"]
 }

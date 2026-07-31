@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS analytics_events (
 );
 
 -- Seed templates
-INSERT INTO templates (id, name, config) VALUES
+INSERT OR IGNORE INTO templates (id, name, config) VALUES
   ('template-1', 'Classic Elegance', '{"primaryColor":"#1a1a2e","secondaryColor":"#e94560","fontFamily":"serif","layout":"standard"}'),
   ('template-2', 'Modern Minimal', '{"primaryColor":"#2d3436","secondaryColor":"#0984e3","fontFamily":"sans-serif","layout":"standard"}'),
   ('template-3', 'Warm Rustic', '{"primaryColor":"#8b4513","secondaryColor":"#f4a460","fontFamily":"serif","layout":"hero-first"}'),

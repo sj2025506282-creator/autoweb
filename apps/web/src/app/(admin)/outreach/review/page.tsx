@@ -24,26 +24,30 @@ export default function ReviewPage() {
   const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || "autoweb.app";
 
   useEffect(() => {
-    fetchDemos();
-  }, []);
+    let cancelled = false;
 
-  async function fetchDemos() {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/outreach");
-      if (res.ok) {
-        const data = (await res.json()) as DemoRestaurant[];
-        setDemos(data);
-      } else {
-        setError("Failed to load demo sites");
+    async function loadDemos() {
+      try {
+        const res = await fetch("/api/outreach");
+        if (cancelled) return;
+        if (res.ok) {
+          const data = (await res.json()) as DemoRestaurant[];
+          setDemos(data);
+        } else {
+          setError("Failed to load demo sites");
+        }
+      } catch {
+        if (!cancelled) setError("Network error. Please try again.");
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
     }
-  }
+
+    void loadDemos();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleAction(id: string, action: "approve" | "reject") {
     setActionStates((prev) => ({ ...prev, [id]: action }));
@@ -158,6 +162,12 @@ export default function ReviewPage() {
                 </div>
 
                 <div className="flex items-center gap-3 flex-shrink-0">
+                  <Link
+                    href={`/restaurants/${demo.id}`}
+                    className="px-4 py-2 border rounded text-gray-700 hover:bg-gray-50 text-sm whitespace-nowrap"
+                  >
+                    Edit
+                  </Link>
                   <a
                     href={`https://${demo.slug}.${mainDomain}`}
                     target="_blank"
@@ -169,10 +179,15 @@ export default function ReviewPage() {
                   <button
                     type="button"
                     onClick={() => handleAction(demo.id, "approve")}
-                    disabled={isProcessing}
+                    disabled={isProcessing || !demo.email}
+                    title={!demo.email ? "Add an outreach email before sending" : undefined}
                     className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:bg-green-300 disabled:cursor-not-allowed text-sm whitespace-nowrap"
                   >
-                    {actionState === "approve" ? "Approving…" : "Approve & Send Email"}
+                    {actionState === "approve"
+                      ? "Sending…"
+                      : demo.email
+                        ? "Approve & Send Email"
+                        : "Email Required"}
                   </button>
                   <button
                     type="button"

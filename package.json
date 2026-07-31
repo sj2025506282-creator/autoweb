@@ -4,6 +4,9 @@
   "scripts": {
     "dev": "pnpm --parallel -r dev",
     "build": "pnpm -r build",
-    "lint": "pnpm -r lint"
+    "lint": "pnpm -r lint",
+    "test": "pnpm --filter @autoweb/api test",
+    "check:size": "node scripts/check-source-size.mjs",
+    "check": "pnpm check:size && pnpm test && pnpm lint && pnpm build"
   }
 }

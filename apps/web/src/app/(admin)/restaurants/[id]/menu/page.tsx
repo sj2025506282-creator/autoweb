@@ -79,7 +79,8 @@ export default function MenuPage() {
   }, [restaurantId]);
 
   useEffect(() => {
-    fetchMenu();
+    const timeout = window.setTimeout(() => void fetchMenu(), 0);
+    return () => window.clearTimeout(timeout);
   }, [fetchMenu]);
 
   function toggleCategory(categoryId: string) {

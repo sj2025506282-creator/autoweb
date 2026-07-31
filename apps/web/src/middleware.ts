@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const MAIN_DOMAIN = process.env.MAIN_DOMAIN || "autoweb.app";
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const hostname = request.headers.get("host") || "";
   const url = request.nextUrl.clone();
 

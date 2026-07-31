@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { apiFetch } from "@/lib/api-client";
 import type { SessionUser } from "@autoweb/shared";
+import { PasswordForm } from "./password-form";
 
 export default async function SettingsPage() {
   let user: SessionUser | null = null;
@@ -31,9 +32,7 @@ export default async function SettingsPage() {
         <hr className="my-6" />
 
         <h3 className="text-lg font-semibold mb-4">Password</h3>
-        <p className="text-sm text-gray-500 mb-4">
-          Password change will be available in a future update.
-        </p>
+        <PasswordForm />
 
         <hr className="my-6" />
 

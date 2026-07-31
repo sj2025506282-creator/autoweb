@@ -1,16 +1,19 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import { jwtAuth } from '../middleware/auth'
+import { adminOnly, jwtAuth, restaurantAccess } from '../middleware/auth'
 import { v4 as uuid } from 'uuid'
 
 const app = new Hono<{ Bindings: { DB: D1Database; JWT_SECRET: string } }>()
 
 // GET — list all restaurants (admin), or a single restaurant
 app.get('/', jwtAuth, async (c) => {
-  const result = await c.env.DB.prepare(
-    'SELECT * FROM restaurants ORDER BY created_at DESC'
-  ).all()
+  const user = c.get('user')
+  const result = user.role === 'admin'
+    ? await c.env.DB.prepare('SELECT * FROM restaurants ORDER BY created_at DESC').all()
+    : await c.env.DB.prepare(
+      'SELECT * FROM restaurants WHERE id = ? ORDER BY created_at DESC'
+    ).bind(user.restaurantId || '').all()
   return c.json(result.results)
 })
 
@@ -28,7 +31,7 @@ const createSchema = z.object({
 })
 
 // POST — create a new restaurant
-app.post('/', jwtAuth, zValidator('json', createSchema), async (c) => {
+app.post('/', jwtAuth, adminOnly, zValidator('json', createSchema), async (c) => {
   const body = c.req.valid('json')
   const id = uuid()
   const slug = body.slug || body.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
@@ -44,7 +47,7 @@ app.post('/', jwtAuth, zValidator('json', createSchema), async (c) => {
 })
 
 // GET /:id — get a single restaurant
-app.get('/:id', jwtAuth, async (c) => {
+app.get('/:id', jwtAuth, restaurantAccess, async (c) => {
   const id = c.req.param('id')
   const restaurant = await c.env.DB.prepare(
     'SELECT * FROM restaurants WHERE id = ?'
@@ -67,7 +70,7 @@ const updateSchema = z.object({
 })
 
 // PUT /:id — update a restaurant
-app.put('/:id', jwtAuth, zValidator('json', updateSchema), async (c) => {
+app.put('/:id', jwtAuth, restaurantAccess, zValidator('json', updateSchema), async (c) => {
   const id = c.req.param('id')
   const body = c.req.valid('json')
 
@@ -98,7 +101,7 @@ app.put('/:id', jwtAuth, zValidator('json', updateSchema), async (c) => {
 })
 
 // DELETE /:id — delete a restaurant
-app.delete('/:id', jwtAuth, async (c) => {
+app.delete('/:id', jwtAuth, adminOnly, async (c) => {
   const id = c.req.param('id')
   await c.env.DB.prepare('DELETE FROM restaurants WHERE id = ?').bind(id).run()
   return c.json({ success: true })

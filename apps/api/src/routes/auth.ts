@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import { signToken, jwtAuth } from '../middleware/auth'
-import { verifyPassword } from '../services/password'
+import { hashPassword, verifyPassword } from '../services/password'
 import { checkRateLimit } from '../services/rate-limiter'
 import type { SessionUser } from '@autoweb/shared'
 
@@ -48,17 +48,47 @@ app.post('/login', zValidator('json', loginSchema), async (c) => {
   }
 
   const token = await signToken(sessionUser, c.env.JWT_SECRET)
-  c.header('Set-Cookie', `auth_token=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=86400`)
+  const secure = new URL(c.req.url).protocol === 'https:' ? '; Secure' : ''
+  c.header('Set-Cookie', `auth_token=${token}; HttpOnly${secure}; SameSite=Lax; Path=/; Max-Age=86400`)
   return c.json({ success: true, role: user.role, user: sessionUser })
 })
 
 app.post('/logout', async (c) => {
-  c.header('Set-Cookie', 'auth_token=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0')
+  const secure = new URL(c.req.url).protocol === 'https:' ? '; Secure' : ''
+  c.header('Set-Cookie', `auth_token=; HttpOnly${secure}; SameSite=Lax; Path=/; Max-Age=0`)
   return c.json({ success: true })
 })
 
 app.get('/me', jwtAuth, (c) => {
   return c.json(c.get('user'))
+})
+
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1).max(200),
+  newPassword: z.string()
+    .min(12)
+    .max(200)
+    .regex(/[a-z]/, 'Password must contain a lowercase letter')
+    .regex(/[A-Z]/, 'Password must contain an uppercase letter')
+    .regex(/[0-9]/, 'Password must contain a number'),
+})
+
+app.post('/change-password', jwtAuth, zValidator('json', changePasswordSchema), async (c) => {
+  const { currentPassword, newPassword } = c.req.valid('json')
+  const user = c.get('user')
+  const record = await c.env.DB.prepare(
+    'SELECT password_hash FROM users WHERE id = ?'
+  ).bind(user.id).first<{ password_hash: string }>()
+
+  if (!record || !(await verifyPassword(currentPassword, record.password_hash))) {
+    return c.json({ error: 'Current password is incorrect' }, 401)
+  }
+
+  const passwordHash = await hashPassword(newPassword)
+  await c.env.DB.prepare(
+    'UPDATE users SET password_hash = ? WHERE id = ?'
+  ).bind(passwordHash, user.id).run()
+  return c.json({ success: true })
 })
 
 export default app

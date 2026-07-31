@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import { jwtAuth } from '../middleware/auth'
+import { jwtAuth, restaurantAccess } from '../middleware/auth'
 import { v4 as uuid } from 'uuid'
 
 const app = new Hono<{ Bindings: { DB: D1Database; JWT_SECRET: string } }>()
@@ -12,7 +12,7 @@ app.get('/:id/menu', async (c) => {
 
   // Verify restaurant exists
   const restaurant = await c.env.DB.prepare(
-    'SELECT id FROM restaurants WHERE id = ?'
+    "SELECT id FROM restaurants WHERE id = ? AND status IN ('active','demo')"
   ).bind(id).first()
   if (!restaurant) return c.json({ error: 'Not found' }, 404)
 
@@ -43,7 +43,7 @@ const createSchema = z.object({
 })
 
 // POST /:id/menu — add category or item
-app.post('/:id/menu', jwtAuth, zValidator('json', createSchema), async (c) => {
+app.post('/:id/menu', jwtAuth, restaurantAccess, zValidator('json', createSchema), async (c) => {
   const id = c.req.param('id')
   const body = c.req.valid('json')
 
@@ -91,7 +91,7 @@ app.post('/:id/menu', jwtAuth, zValidator('json', createSchema), async (c) => {
 })
 
 // DELETE /:id/menu — delete category or item (by query param)
-app.delete('/:id/menu', jwtAuth, async (c) => {
+app.delete('/:id/menu', jwtAuth, restaurantAccess, async (c) => {
   const id = c.req.param('id')
   const categoryId = c.req.query('categoryId')
   const itemId = c.req.query('itemId')
@@ -119,7 +119,7 @@ const updateCategorySchema = z.object({
 })
 
 // PUT /:id/menu/:categoryId — update a category (fixes delete+create bug)
-app.put('/:id/menu/:categoryId', jwtAuth, zValidator('json', updateCategorySchema), async (c) => {
+app.put('/:id/menu/:categoryId', jwtAuth, restaurantAccess, zValidator('json', updateCategorySchema), async (c) => {
   const id = c.req.param('id')
   const categoryId = c.req.param('categoryId')
   const body = c.req.valid('json')

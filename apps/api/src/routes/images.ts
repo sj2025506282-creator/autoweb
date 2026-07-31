@@ -23,6 +23,11 @@ app.post('/upload', jwtAuth, async (c) => {
     return c.json({ error: 'restaurantId is required' }, 400)
   }
 
+  const user = c.get('user')
+  if (user.role !== 'admin' && user.restaurantId !== restaurantId) {
+    return c.json({ error: 'Restaurant access denied' }, 403)
+  }
+
   try {
     const url = await uploadImage(c.env.IMAGES, file, restaurantId)
     return c.json({ url }, 201)

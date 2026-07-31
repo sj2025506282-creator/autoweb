@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { MenuItem } from "@/types";
 
 interface GroupedItems {
@@ -45,9 +46,12 @@ export function MenuSection({
                 {/* Image thumbnail */}
                 {item.image_url && (
                   <div className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-gray-100">
-                    <img
+                    <Image
                       src={item.image_url}
                       alt={item.name}
+                      width={96}
+                      height={96}
+                      unoptimized
                       className="w-full h-full object-cover"
                     />
                   </div>

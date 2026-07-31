@@ -16,11 +16,26 @@ type Bindings = {
   IMAGES: R2Bucket
   JWT_SECRET: string
   RESEND_API_KEY: string
+  GOOGLE_PLACES_API_KEY: string
+  ALLOWED_ORIGINS?: string
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
 
-app.use('*', cors({ origin: (origin) => origin, credentials: true }))
+app.use('*', cors({
+  origin: (origin, c) => {
+    const configured = c.env.ALLOWED_ORIGINS?.split(',')
+      .map((value: string) => value.trim())
+      .filter(Boolean) || []
+    const allowed = new Set([
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      ...configured,
+    ])
+    return allowed.has(origin) ? origin : ''
+  },
+  credentials: true,
+}))
 
 app.route('/api/auth', authRoutes)
 app.route('/api/restaurants', restaurantRoutes)

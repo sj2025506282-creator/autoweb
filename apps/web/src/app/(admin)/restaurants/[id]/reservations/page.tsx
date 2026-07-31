@@ -71,7 +71,8 @@ export default function ReservationsAdminPage({
   );
 
   useEffect(() => {
-    fetchReservations();
+    const timeout = window.setTimeout(() => void fetchReservations(), 0);
+    return () => window.clearTimeout(timeout);
   }, [fetchReservations]);
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
