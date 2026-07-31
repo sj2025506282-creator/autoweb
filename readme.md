@@ -42,8 +42,8 @@ pnpm wrangler secret put GOOGLE_PLACES_API_KEY
 pnpm wrangler d1 migrations apply autoweb-db --remote
 ```
 
-首次本地登录使用迁移中的开发账号后，应立即进入 Settings 修改密码。
-新密码使用 PBKDF2-SHA256；旧哈希仅保留登录兼容。
+数据库迁移不会创建默认管理员或共享密码。部署后必须通过受控的运维流程
+显式创建管理员；后续密码使用 PBKDF2-SHA256，旧哈希仅保留登录兼容。
 
 
 ## 自动化流水线
@@ -93,7 +93,7 @@ API_BASE_URL=https://api.example.com \
 
 `pnpm check:size` 会扫描源码和迁移文件，任何文件超过 800 行都会失败。
 API 自动化测试运行在 Cloudflare Workers Vitest Pool 中，并使用真实 D1
-迁移；当前 7 个功能点共 90 条用例，每个功能点至少 10 条。完整缺陷闭环见
+迁移；当前 8 个功能点共 101 条用例，每个功能点至少 10 条。完整缺陷闭环见
 [`docs/testing/AUTOWEB_TEST_REPORT_2026-07-30.md`](docs/testing/AUTOWEB_TEST_REPORT_2026-07-30.md)。
 
 ## 当前外部依赖

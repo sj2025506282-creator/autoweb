@@ -88,6 +88,6 @@ INSERT OR IGNORE INTO templates (id, name, config) VALUES
   ('template-4', 'Fresh Green', '{"primaryColor":"#2d5016","secondaryColor":"#7ec850","fontFamily":"sans-serif","layout":"split"}'),
   ('template-5', 'Bold Dark', '{"primaryColor":"#0a0a0a","secondaryColor":"#ff6b35","fontFamily":"sans-serif","layout":"full-bleed"}');
 
--- Seed admin user (password: 'password' — change on first login)
-INSERT OR IGNORE INTO users (id, email, password_hash, role)
-VALUES ('admin-001', 'admin@autoweb.app', 'e524fe0863799ba731029df985a9c51d:d7fd8c530862b481caeb9ad9bf1627ad04eed6291953bf6639d653f8c9548493', 'admin');
+-- Administrators must be provisioned explicitly after deployment. Never seed a
+-- shared credential into a database migration: fresh production databases run
+-- these migrations unchanged.

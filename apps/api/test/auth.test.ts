@@ -35,6 +35,13 @@ async function login(email = ADMIN.email, password = 'LegacyPass123') {
 describe('feature: authentication and password lifecycle', () => {
   beforeEach(resetDatabase)
 
+  it('00 does not provision a default administrator from migrations', async () => {
+    const row = await env.DB.prepare(
+      'SELECT COUNT(*) AS count FROM users',
+    ).first<{ count: number }>()
+    expect(row?.count).toBe(0)
+  })
+
   it('01 signs and verifies a production JWT', async () => {
     const token = await signToken(ADMIN, env.JWT_SECRET)
     await expect(verifyToken(token, env.JWT_SECRET)).resolves.toEqual(ADMIN)
