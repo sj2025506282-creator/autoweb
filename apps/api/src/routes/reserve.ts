@@ -15,7 +15,13 @@ const reserveSchema = z.object({
   note: z.string().trim().max(1000).optional(),
 })
 
-const app = new Hono<{ Bindings: { DB: D1Database; RESEND_API_KEY: string } }>()
+const app = new Hono<{
+  Bindings: {
+    DB: D1Database
+    RESEND_API_KEY: string
+    RESEND_FROM_EMAIL?: string
+  }
+}>()
 
 app.post('/', zValidator('json', reserveSchema), async (c) => {
   const body = c.req.valid('json')
@@ -60,6 +66,7 @@ app.post('/', zValidator('json', reserveSchema), async (c) => {
   if (restaurant.email && c.env.RESEND_API_KEY) {
     try {
       const result = await sendEmail(c.env.RESEND_API_KEY, {
+        from: c.env.RESEND_FROM_EMAIL || 'AutoWeb <noreply@autoweb.app>',
         to: restaurant.email,
         subject: `New Reservation — ${body.customerName}`,
         html: reservationEmailTemplate({

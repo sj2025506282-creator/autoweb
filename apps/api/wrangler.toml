@@ -6,6 +6,10 @@ compatibility_date = "2025-07-28"
 # pnpm wrangler secret put JWT_SECRET
 # pnpm wrangler secret put RESEND_API_KEY
 # pnpm wrangler secret put GOOGLE_PLACES_API_KEY
+#
+# Set these vars after verifying a production domain in Resend:
+# RESEND_FROM_EMAIL = "AutoWeb <noreply@example.com>"
+# PUBLIC_SITE_URL_TEMPLATE = "https://{slug}.example.com"
 
 [[d1_databases]]
 binding = "DB"

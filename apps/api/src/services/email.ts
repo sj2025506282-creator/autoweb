@@ -21,10 +21,15 @@ export function escapeHtml(value: string): string {
 
 export async function sendEmail(
   apiKey: string,
-  { to, subject, html }: { to: string; subject: string; html: string }
+  {
+    from,
+    to,
+    subject,
+    html,
+  }: { from: string; to: string; subject: string; html: string }
 ) {
   return getResend(apiKey).emails.send({
-    from: 'AutoWeb <noreply@autoweb.app>',
+    from,
     to,
     subject,
     html,
@@ -57,8 +62,6 @@ export function outreachEmailTemplate(data: {
   restaurantName: string
   demoUrl: string
 }) {
-  const mainDomain = 'autoweb.app'
-  const url = `https://${data.demoUrl}.${mainDomain}`
   return `
     <h2>Your Restaurant Website is Ready!</h2>
     <p>Hi there,</p>
@@ -67,7 +70,7 @@ export function outreachEmailTemplate(data: {
       You can preview it here:
     </p>
     <p>
-      <a href="${url}" style="display:inline-block;padding:12px 24px;background:#2563eb;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
+      <a href="${escapeHtml(data.demoUrl)}" style="display:inline-block;padding:12px 24px;background:#2563eb;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
         View Your Demo Site
       </a>
     </p>

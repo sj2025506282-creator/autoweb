@@ -12,6 +12,8 @@ const app = new Hono<{
     DB: D1Database
     JWT_SECRET: string
     RESEND_API_KEY: string
+    RESEND_FROM_EMAIL?: string
+    PUBLIC_SITE_URL_TEMPLATE?: string
     GOOGLE_PLACES_API_KEY: string
   }
 }>()
@@ -193,9 +195,14 @@ app.put('/:id', jwtAuth, adminOnly, zValidator('json', updateStatusSchema), asyn
 
     try {
       const result = await sendEmail(c.env.RESEND_API_KEY, {
+        from: c.env.RESEND_FROM_EMAIL || 'AutoWeb <noreply@autoweb.app>',
         to: email,
         subject: `Your restaurant website demo is ready — ${name}`,
-        html: outreachEmailTemplate({ restaurantName: name, demoUrl: slug }),
+        html: outreachEmailTemplate({
+          restaurantName: name,
+          demoUrl: (c.env.PUBLIC_SITE_URL_TEMPLATE || 'https://{slug}.autoweb.app')
+            .replace('{slug}', encodeURIComponent(slug)),
+        }),
       })
       if (result.error) {
         await c.env.DB.prepare(

@@ -16,6 +16,8 @@ type Bindings = {
   IMAGES: R2Bucket
   JWT_SECRET: string
   RESEND_API_KEY: string
+  RESEND_FROM_EMAIL?: string
+  PUBLIC_SITE_URL_TEMPLATE?: string
   GOOGLE_PLACES_API_KEY: string
   ALLOWED_ORIGINS?: string
 }
