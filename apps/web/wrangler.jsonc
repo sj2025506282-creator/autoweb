@@ -4,11 +4,21 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-07-30",
   "compatibility_flags": ["nodejs_compat"],
+  "routes": [
+    {
+      "pattern": "autoweb.animalmusicstudio.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "*.autoweb.animalmusicstudio.com/*",
+      "zone_name": "animalmusicstudio.com"
+    }
+  ],
   "vars": {
-    "API_BASE_URL": "https://autoweb-api.sj2025506282.workers.dev",
-    "MAIN_DOMAIN": "autoweb-web.sj2025506282.workers.dev",
-    "NEXT_PUBLIC_MAIN_DOMAIN": "autoweb-web.sj2025506282.workers.dev",
-    "NEXT_PUBLIC_BASE_URL": "https://autoweb-web.sj2025506282.workers.dev"
+    "API_BASE_URL": "https://api.autoweb.animalmusicstudio.com",
+    "MAIN_DOMAIN": "autoweb.animalmusicstudio.com",
+    "NEXT_PUBLIC_MAIN_DOMAIN": "autoweb.animalmusicstudio.com",
+    "NEXT_PUBLIC_BASE_URL": "https://autoweb.animalmusicstudio.com"
   },
   "services": [
     {

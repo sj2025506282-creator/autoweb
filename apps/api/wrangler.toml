@@ -1,15 +1,24 @@
 name = "autoweb-api"
 main = "src/index.ts"
 compatibility_date = "2025-07-28"
+workers_dev = true
+
+routes = [
+  { pattern = "api.autoweb.animalmusicstudio.com", custom_domain = true }
+]
+
+[vars]
+ALLOWED_ORIGINS = "https://autoweb.animalmusicstudio.com"
+RESEND_FROM_EMAIL = "AutoWeb <noreply@mail.animalmusicstudio.com>"
+PUBLIC_SITE_URL_TEMPLATE = "https://{slug}.autoweb.animalmusicstudio.com"
 
 # Configure production secrets with:
 # pnpm wrangler secret put JWT_SECRET
 # pnpm wrangler secret put RESEND_API_KEY
 # pnpm wrangler secret put GOOGLE_PLACES_API_KEY
 #
-# Set these vars after verifying a production domain in Resend:
-# RESEND_FROM_EMAIL = "AutoWeb <noreply@example.com>"
-# PUBLIC_SITE_URL_TEMPLATE = "https://{slug}.example.com"
+# RESEND_FROM_EMAIL becomes usable after mail.animalmusicstudio.com
+# is verified in Resend.
 
 [[d1_databases]]
 binding = "DB"
