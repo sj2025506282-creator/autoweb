@@ -15,7 +15,7 @@
     }
   ],
   "vars": {
-    "API_BASE_URL": "https://api.autoweb.animalmusicstudio.com",
+    "API_BASE_URL": "https://autoweb-api.sj2025506282.workers.dev",
     "MAIN_DOMAIN": "autoweb.animalmusicstudio.com",
     "NEXT_PUBLIC_MAIN_DOMAIN": "autoweb.animalmusicstudio.com",
     "NEXT_PUBLIC_BASE_URL": "https://autoweb.animalmusicstudio.com"
