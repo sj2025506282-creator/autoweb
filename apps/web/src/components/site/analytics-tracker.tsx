@@ -9,7 +9,7 @@ export function AnalyticsTracker({ restaurantId }: { restaurantId: string }) {
   useEffect(() => {
     if (!restaurantId) return;
 
-    fetch("/api/analytics", {
+    fetch("/backend/analytics", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -47,7 +47,7 @@ export function ReservationForm({ restaurantId }: { restaurantId: string }) {
         ? `${formData.date}T${formData.time}:00`
         : "";
 
-      const res = await fetch("/api/reserve", {
+      const res = await fetch("/backend/reserve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

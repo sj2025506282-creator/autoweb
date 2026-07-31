@@ -63,7 +63,7 @@ export default function MenuPage() {
 
   const fetchMenu = useCallback(async () => {
     try {
-      const res = await fetch(`/api/restaurants/${restaurantId}/menu`);
+      const res = await fetch(`/backend/restaurants/${restaurantId}/menu`);
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: "Load failed" }));
         setError((err as { error?: string }).error ?? "Failed to load menu");
@@ -135,11 +135,11 @@ export default function MenuPage() {
       if (editingCategoryId) {
         // Update: delete old + create new (simplified — for full update, would need PUT)
         await fetch(
-          `/api/restaurants/${restaurantId}/menu?categoryId=${editingCategoryId}`,
+          `/backend/restaurants/${restaurantId}/menu?categoryId=${editingCategoryId}`,
           { method: "DELETE" }
         );
       }
-      const res = await fetch(`/api/restaurants/${restaurantId}/menu`, {
+      const res = await fetch(`/backend/restaurants/${restaurantId}/menu`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -175,7 +175,7 @@ export default function MenuPage() {
     setError("");
     try {
       const res = await fetch(
-        `/api/restaurants/${restaurantId}/menu?categoryId=${categoryId}`,
+        `/backend/restaurants/${restaurantId}/menu?categoryId=${categoryId}`,
         { method: "DELETE" }
       );
       if (!res.ok) {
@@ -239,11 +239,11 @@ export default function MenuPage() {
     try {
       if (editingItemId) {
         await fetch(
-          `/api/restaurants/${restaurantId}/menu?itemId=${editingItemId}`,
+          `/backend/restaurants/${restaurantId}/menu?itemId=${editingItemId}`,
           { method: "DELETE" }
         );
       }
-      const res = await fetch(`/api/restaurants/${restaurantId}/menu`, {
+      const res = await fetch(`/backend/restaurants/${restaurantId}/menu`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -277,7 +277,7 @@ export default function MenuPage() {
     setError("");
     try {
       const res = await fetch(
-        `/api/restaurants/${restaurantId}/menu?itemId=${itemId}`,
+        `/backend/restaurants/${restaurantId}/menu?itemId=${itemId}`,
         { method: "DELETE" }
       );
       if (!res.ok) {

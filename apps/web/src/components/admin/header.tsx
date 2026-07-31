@@ -5,7 +5,7 @@ import type { SessionUser } from "@autoweb/shared";
 export function Header({ user }: { user: SessionUser }) {
   const router = useRouter();
   async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/backend/auth/logout", { method: "POST" });
     router.push("/login");
   }
   return (

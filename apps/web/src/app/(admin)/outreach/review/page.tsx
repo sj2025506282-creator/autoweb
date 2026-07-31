@@ -28,7 +28,7 @@ export default function ReviewPage() {
 
     async function loadDemos() {
       try {
-        const res = await fetch("/api/outreach");
+        const res = await fetch("/backend/outreach");
         if (cancelled) return;
         if (res.ok) {
           const data = (await res.json()) as DemoRestaurant[];
@@ -53,7 +53,7 @@ export default function ReviewPage() {
     setActionStates((prev) => ({ ...prev, [id]: action }));
     setError("");
     try {
-      const res = await fetch(`/api/outreach/${id}`, {
+      const res = await fetch(`/backend/outreach/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

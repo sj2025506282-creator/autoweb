@@ -82,7 +82,7 @@ export function ImageUpload({
         setError("Upload cancelled.");
       });
 
-      xhr.open("POST", "/api/images/upload");
+      xhr.open("POST", "/backend/images/upload");
       xhr.send(formData);
     },
     [restaurantId, onUploaded],

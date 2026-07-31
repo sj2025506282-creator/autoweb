@@ -39,7 +39,7 @@ export function RestaurantForm({ initialData, mode }: RestaurantFormProps) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    fetch("/api/templates")
+    fetch("/backend/templates")
       .then((res) => res.json())
       .then((data) => {
         const templates = data as Template[];
@@ -69,8 +69,8 @@ export function RestaurantForm({ initialData, mode }: RestaurantFormProps) {
     try {
       const url =
         mode === "create"
-          ? "/api/restaurants"
-          : `/api/restaurants/${initialData!.id}`;
+          ? "/backend/restaurants"
+          : `/backend/restaurants/${initialData!.id}`;
       const method = mode === "create" ? "POST" : "PUT";
 
       const res = await fetch(url, {
@@ -99,7 +99,7 @@ export function RestaurantForm({ initialData, mode }: RestaurantFormProps) {
     setIsDeleting(true);
     setError("");
     try {
-      const res = await fetch(`/api/restaurants/${initialData!.id}`, {
+      const res = await fetch(`/backend/restaurants/${initialData!.id}`, {
         method: "DELETE",
       });
       if (res.ok) {

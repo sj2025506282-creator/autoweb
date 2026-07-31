@@ -68,7 +68,7 @@ export default function OutreachPage() {
     setSearchError("");
     setHasSearched(true);
     try {
-      const res = await fetch(`/api/outreach/search?q=${encodeURIComponent(query.trim())}&limit=20`);
+      const res = await fetch(`/backend/outreach/search?q=${encodeURIComponent(query.trim())}&limit=20`);
       const data = await res.json().catch(() => ({ error: "Search request failed" }));
       if (!res.ok) {
         setPlaces([]);
@@ -130,7 +130,7 @@ export default function OutreachPage() {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/outreach", {
+      const res = await fetch("/backend/outreach", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

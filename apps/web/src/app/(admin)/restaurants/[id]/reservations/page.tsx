@@ -45,7 +45,7 @@ export default function ReservationsAdminPage({
       setError(null);
       try {
         const url = new URL(
-          `/api/restaurants/${id}/reservations`,
+          `/backend/restaurants/${id}/reservations`,
           window.location.origin
         );
         if (date) url.searchParams.set("date", date);
