@@ -1,6 +1,7 @@
 name: Deploy
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
@@ -51,7 +52,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: '22', cache: 'pnpm' }
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @autoweb/web deploy
+      - run: pnpm --filter @autoweb/web run deploy
         env:
           CLOUDFLARE_API_TOKEN: "${{ secrets.CF_API_TOKEN }}"
           CLOUDFLARE_ACCOUNT_ID: "${{ secrets.CF_ACCOUNT_ID }}"

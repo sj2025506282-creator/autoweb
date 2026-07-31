@@ -155,7 +155,9 @@ describe('feature: demo review and outreach email transaction', () => {
     )
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
     const payload = JSON.parse(String(init.body)) as { html: string }
-    expect(payload.html).toContain('https://expected-slug.autoweb.app')
+    expect(payload.html).toContain(
+      'https://expected-slug.autoweb.animalmusicstudio.com',
+    )
   })
 
   it('12 does not send email when sendEmail is omitted', async () => {
