@@ -4,6 +4,12 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-07-30",
   "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "API_BASE_URL": "https://autoweb-api.sj2025506282.workers.dev",
+    "MAIN_DOMAIN": "autoweb-web.sj2025506282.workers.dev",
+    "NEXT_PUBLIC_MAIN_DOMAIN": "autoweb-web.sj2025506282.workers.dev",
+    "NEXT_PUBLIC_BASE_URL": "https://autoweb-web.sj2025506282.workers.dev"
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
