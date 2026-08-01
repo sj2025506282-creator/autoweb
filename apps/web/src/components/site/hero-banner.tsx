@@ -2,41 +2,37 @@ import Link from "next/link";
 import type { Restaurant } from "@/types";
 
 export function HeroBanner({ restaurant }: { restaurant: Restaurant }) {
-  return (
-    <section className="relative min-h-[60vh] flex items-center justify-center bg-gray-900 overflow-hidden">
-      {/* Cover image background */}
-      {restaurant.cover_image && (
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${restaurant.cover_image})` }}
-        />
-      )}
+  const background = restaurant.cover_image || "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=2200&q=90";
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/60" />
+  return (
+    <section className="relative flex min-h-[82vh] items-end overflow-hidden bg-stone-950">
+      <div className="absolute inset-0 scale-[1.02] bg-cover bg-center" style={{ backgroundImage: `url(${background})` }} />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
 
       {/* Content */}
-      <div className="relative z-10 text-center px-4 max-w-3xl mx-auto py-20">
-        <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-16 pt-32 sm:px-8 md:pb-24">
+        <p className="mb-5 text-xs font-semibold uppercase tracking-[0.32em] text-amber-300">Local ingredients · Honest cooking</p>
+        <h1 className="max-w-4xl font-serif text-5xl leading-[0.95] tracking-tight text-white sm:text-7xl md:text-8xl">
           {restaurant.name}
         </h1>
         {restaurant.description && (
-          <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-7 max-w-2xl text-base leading-7 text-stone-200 sm:text-lg">
             {restaurant.description}
           </p>
         )}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="mt-9 flex flex-col gap-3 sm:flex-row">
           <Link
             href="/menu"
-            className="inline-block px-8 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+            className="inline-flex items-center justify-center bg-amber-300 px-7 py-3.5 text-sm font-semibold text-stone-950 transition hover:bg-amber-200"
           >
-            View Our Menu
+            Explore the menu
           </Link>
           <Link
             href="/reserve"
-            className="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center justify-center border border-white/50 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white hover:text-stone-950"
           >
-            Make a Reservation
+            Reserve a table
           </Link>
         </div>
       </div>

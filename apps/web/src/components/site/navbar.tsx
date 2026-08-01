@@ -14,20 +14,24 @@ export function Navbar({ restaurantName }: { restaurantName: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 border-b border-stone-200/80 bg-[#f7f3eb]/95 backdrop-blur-md">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
         {/* Brand */}
-        <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">
+        <Link href="/" className="font-serif text-xl font-semibold tracking-tight text-stone-950 sm:text-2xl">
           {restaurantName}
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav aria-label="Restaurant navigation" className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+              className={`text-xs font-semibold uppercase tracking-[0.12em] transition-colors ${
+                link.href === "/reserve"
+                  ? "bg-stone-950 px-5 py-3 text-white hover:bg-amber-600"
+                  : "text-stone-600 hover:text-amber-700"
+              }`}
             >
               {link.label}
             </Link>
@@ -36,7 +40,7 @@ export function Navbar({ restaurantName }: { restaurantName: string }) {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden p-2 rounded hover:bg-gray-100"
+          className="rounded p-2 text-stone-800 hover:bg-stone-200/60 md:hidden"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -52,12 +56,12 @@ export function Navbar({ restaurantName }: { restaurantName: string }) {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <nav className="md:hidden bg-white border-t border-gray-200 px-4 py-3">
+        <nav className="border-t border-stone-200 bg-[#f7f3eb] px-5 py-4 md:hidden">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="block py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+              className="block border-b border-stone-200 py-3 text-sm font-medium text-stone-700 last:border-0 hover:text-amber-700"
               onClick={() => setMenuOpen(false)}
             >
               {link.label}

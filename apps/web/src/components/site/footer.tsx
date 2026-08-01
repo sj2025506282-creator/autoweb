@@ -8,30 +8,33 @@ export function Footer({
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-gray-400">
-      <div className="max-w-6xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="bg-stone-950 text-stone-400">
+      <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           {/* Brand */}
           <div>
-            <h3 className="text-white text-lg font-semibold mb-2">{restaurantName}</h3>
-            <p className="text-sm">&copy; {year} {restaurantName}. All rights reserved.</p>
+            <h3 className="font-serif text-2xl text-white">{restaurantName}</h3>
+            <p className="mt-3 max-w-xs text-sm leading-6">A place for good food, warm company and evenings that linger.</p>
           </div>
 
           {/* Address */}
           {address && (
             <div>
-              <h4 className="text-white text-sm font-semibold mb-2">Location</h4>
-              <p className="text-sm leading-relaxed">{address}</p>
+              <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-300">Find us</h4>
+              <p className="mt-3 text-sm leading-6">{address}</p>
             </div>
           )}
 
           {/* Powered by */}
           <div className="md:text-right">
-            <p className="text-xs">
+            <p className="text-xs text-stone-500">
               Powered by{" "}
-              <span className="text-gray-300 font-medium">AutoWeb</span>
+              <span className="font-medium text-stone-300">AutoWeb</span>
             </p>
           </div>
+        </div>
+        <div className="mt-12 border-t border-white/10 pt-6 text-xs text-stone-600">
+          &copy; {year} {restaurantName}. All rights reserved.
         </div>
       </div>
     </footer>
