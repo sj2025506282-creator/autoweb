@@ -65,6 +65,8 @@ const createDemoSchema = z.object({
   description: z.string().optional(),
   googlePlaceId: z.string().max(255).optional(),
   sourceUrl: z.string().url().max(2048).optional().or(z.literal('')),
+  menuSourceUrl: z.string().url().max(2048),
+  menuVerified: z.literal(true),
   menuItems: z.array(z.object({
     category: z.string().trim().min(1),
     name: z.string().trim().min(1),
@@ -115,8 +117,8 @@ app.post('/', jwtAuth, adminOnly, zValidator('json', createDemoSchema), async (c
   const statements: D1PreparedStatement[] = [c.env.DB.prepare(
     `INSERT INTO restaurants (
        id, name, slug, phone, email, address, lat, lng, status, cover_image,
-       description, google_place_id, source_url
-     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'demo', ?, ?, ?, ?)`
+       description, google_place_id, source_url, menu_source_url, menu_verified
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'demo', ?, ?, ?, ?, ?, 1)`
   ).bind(
     id,
     body.name,
@@ -129,7 +131,8 @@ app.post('/', jwtAuth, adminOnly, zValidator('json', createDemoSchema), async (c
     body.imageUrls?.[0] || '',
     body.description || '',
     body.googlePlaceId || '',
-    body.sourceUrl || ''
+    body.sourceUrl || '',
+    body.menuSourceUrl
   )]
 
   const categoryIds = new Map<string, string>()

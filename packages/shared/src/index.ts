@@ -14,6 +14,8 @@ export interface Restaurant {
   description: string;
   google_place_id?: string;
   source_url?: string;
+  menu_source_url?: string;
+  menu_verified?: number;
   outreach_sent_at?: string | null;
   template_id: string;
   domain_custom: string;

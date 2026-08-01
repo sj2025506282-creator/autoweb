@@ -1,0 +1,2 @@
+ALTER TABLE restaurants ADD COLUMN menu_source_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE restaurants ADD COLUMN menu_verified INTEGER NOT NULL DEFAULT 0;

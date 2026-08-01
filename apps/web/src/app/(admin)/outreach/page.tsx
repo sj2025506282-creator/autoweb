@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getDemoMenuForLocation } from "@/lib/demo-menu";
 
 interface MenuItemInput {
   category: string;
@@ -46,6 +45,7 @@ const emptyForm = {
   imageUrl: "",
   googlePlaceId: "",
   sourceUrl: "",
+  menuSourceUrl: "",
 };
 
 export default function OutreachPage() {
@@ -61,6 +61,7 @@ export default function OutreachPage() {
     blankMenuItem,
   ]);
   const [error, setError] = useState("");
+  const [menuVerified, setMenuVerified] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const visiblePlaces = useMemo(
@@ -108,13 +109,8 @@ export default function OutreachPage() {
       sourceUrl: place.googleMapsUrl,
       description: prev.description || `${place.name} is a restaurant located at ${place.address}.`,
     }));
-    setMenuItems(getDemoMenuForLocation(place.address).map((item) => ({
-      category: item.category_name,
-      name: item.name,
-      description: item.description,
-      price: String(item.price),
-      imageUrl: item.image_url,
-    })));
+    setMenuItems([{ ...blankMenuItem }]);
+    setMenuVerified(false);
     setError("");
     document.getElementById("restaurant-details")?.scrollIntoView({
       behavior: "smooth",
@@ -152,6 +148,10 @@ export default function OutreachPage() {
       setError("A sales-ready demo requires at least 12 dishes across 4 categories.");
       return;
     }
+    if (!form.menuSourceUrl.trim() || !menuVerified) {
+      setError("Add the restaurant's public menu source and confirm every item was verified.");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -169,6 +169,8 @@ export default function OutreachPage() {
           imageUrls: form.imageUrl.trim() ? [form.imageUrl.trim()] : [],
           googlePlaceId: form.googlePlaceId || undefined,
           sourceUrl: form.sourceUrl,
+          menuSourceUrl: form.menuSourceUrl.trim(),
+          menuVerified,
           menuItems: menuItems
             .filter((item) => item.name.trim())
             .map((item) => ({
@@ -404,6 +406,20 @@ export default function OutreachPage() {
                 className="p-2 border rounded sm:col-span-2" disabled={isSubmitting} placeholder="Image URL" />
             </div>
           ))}
+          <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <label className="block text-sm font-medium text-amber-950">
+              Public menu source URL
+              <input type="url" value={form.menuSourceUrl}
+                onChange={(e) => updateField("menuSourceUrl", e.target.value)}
+                className="mt-2 block w-full rounded border border-amber-200 bg-white p-2"
+                placeholder="Official website, official social post, or current menu listing" />
+            </label>
+            <label className="mt-3 flex items-start gap-2 text-sm text-amber-950">
+              <input type="checkbox" checked={menuVerified}
+                onChange={(e) => setMenuVerified(e.target.checked)} className="mt-1" />
+              <span>I checked every dish, description and price against this source. No generated menu content is included.</span>
+            </label>
+          </div>
         </div>
 
         <div className="flex justify-end">

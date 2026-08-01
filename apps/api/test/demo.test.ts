@@ -19,6 +19,11 @@ function completeMenu(firstPrice = 8) {
   }))
 }
 
+const verifiedMenu = {
+  menuSourceUrl: 'https://restaurant.example.com/menu',
+  menuVerified: true as const,
+}
+
 describe('feature: demo generation and duplicate prevention', () => {
   beforeEach(resetDatabase)
 
@@ -49,6 +54,7 @@ describe('feature: demo generation and duplicate prevention', () => {
       address: '10 Test Road',
       googlePlaceId: 'google-10',
       sourceUrl: 'https://maps.google.com/test',
+      ...verifiedMenu,
       menuItems: completeMenu(),
     }, await authCookie())
     const body = await response.json() as { id: string; slug: string }
@@ -66,6 +72,7 @@ describe('feature: demo generation and duplicate prevention', () => {
   it('05 creates menu items atomically with the demo', async () => {
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: 'Menu Cafe',
+      ...verifiedMenu,
       menuItems: completeMenu(),
     }, await authCookie())
     const { id } = await response.json() as { id: string }
@@ -82,6 +89,7 @@ describe('feature: demo generation and duplicate prevention', () => {
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: 'Duplicate',
       googlePlaceId: 'duplicate-place',
+      ...verifiedMenu,
       menuItems: completeMenu(),
     }, await authCookie())
     expect(response.status).toBe(409)
@@ -95,6 +103,7 @@ describe('feature: demo generation and duplicate prevention', () => {
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: 'Same Name',
       googlePlaceId: 'new-place',
+      ...verifiedMenu,
       menuItems: completeMenu(),
     }, await authCookie())
     expect(await response.json()).toMatchObject({ slug: 'same-name-2' })
@@ -104,6 +113,7 @@ describe('feature: demo generation and duplicate prevention', () => {
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: '测试餐厅',
       googlePlaceId: 'non-latin',
+      ...verifiedMenu,
       menuItems: completeMenu(),
     }, await authCookie())
     expect(await response.json()).toMatchObject({ slug: 'restaurant' })
@@ -135,6 +145,7 @@ describe('feature: demo generation and duplicate prevention', () => {
   it('11 preserves decimal menu prices', async () => {
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: 'Decimal Cafe',
+      ...verifiedMenu,
       menuItems: completeMenu(4.75),
     }, await authCookie())
     const { id } = await response.json() as { id: string }
@@ -151,6 +162,7 @@ describe('feature: demo generation and duplicate prevention', () => {
       name: 'International Cafe',
       googlePlaceId: 'international-url',
       sourceUrl: 'https://例子.测试/餐厅',
+      ...verifiedMenu,
       menuItems: completeMenu(),
     }, await authCookie())
     expect(response.status).toBe(201)
@@ -169,6 +181,7 @@ describe('feature: demo generation and duplicate prevention', () => {
     const payload = {
       name: 'Concurrent Cafe',
       googlePlaceId: 'same-concurrent-place',
+      ...verifiedMenu,
       menuItems: completeMenu(),
     }
     const responses = await Promise.all([
@@ -185,6 +198,7 @@ describe('feature: demo generation and duplicate prevention', () => {
   it('15 rejects demos with fewer than 12 menu items', async () => {
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: 'Thin Menu Cafe',
+      ...verifiedMenu,
       menuItems: completeMenu().slice(0, 8),
     }, await authCookie())
     expect(response.status).toBe(400)
@@ -194,7 +208,26 @@ describe('feature: demo generation and duplicate prevention', () => {
     const menuItems = completeMenu().map((item) => ({ ...item, category: 'Menu' }))
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: 'One Category Cafe',
+      ...verifiedMenu,
       menuItems,
+    }, await authCookie())
+    expect(response.status).toBe(400)
+  })
+
+  it('17 rejects menus without a public source URL', async () => {
+    const response = await jsonRequest('/api/outreach', 'POST', {
+      name: 'Unsourced Cafe',
+      menuVerified: true,
+      menuItems: completeMenu(),
+    }, await authCookie())
+    expect(response.status).toBe(400)
+  })
+
+  it('18 rejects menus that were not explicitly verified', async () => {
+    const response = await jsonRequest('/api/outreach', 'POST', {
+      name: 'Unchecked Cafe',
+      menuSourceUrl: verifiedMenu.menuSourceUrl,
+      menuItems: completeMenu(),
     }, await authCookie())
     expect(response.status).toBe(400)
   })
