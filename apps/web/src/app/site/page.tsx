@@ -18,7 +18,14 @@ export default async function SiteHomePage() {
     '/api/restaurants/' + restaurant.id + '/menu'
   );
   const menuItems = menu.items.length > 0 ? menu.items : getDemoMenu(restaurant);
-  const featuredItems = menuItems.slice(0, 6);
+  const categorySeen = new Set<string>();
+  const featuredItems = menuItems
+    .filter((item) => {
+      if (categorySeen.has(item.category_name)) return false;
+      categorySeen.add(item.category_name);
+      return true;
+    })
+    .slice(0, 6);
   const currency = menuCurrency(restaurant);
 
   return (
