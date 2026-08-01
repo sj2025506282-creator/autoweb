@@ -66,9 +66,21 @@ const createDemoSchema = z.object({
   googlePlaceId: z.string().max(255).optional(),
   sourceUrl: z.string().url().max(2048).optional().or(z.literal('')),
   menuItems: z.array(z.object({
-    name: z.string(),
+    category: z.string().trim().min(1),
+    name: z.string().trim().min(1),
+    description: z.string().trim().min(8),
     price: z.number().optional(),
-  })).optional(),
+    imageUrl: z.string().url().or(z.literal('')).optional(),
+  })).min(12),
+}).superRefine((body, ctx) => {
+  const categories = new Set(body.menuItems.map((item) => item.category.toLowerCase()))
+  if (categories.size < 4) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['menuItems'],
+      message: 'A sales-ready demo requires at least 4 menu categories.',
+    })
+  }
 })
 
 // POST — generate demo restaurant site
@@ -120,16 +132,26 @@ app.post('/', jwtAuth, adminOnly, zValidator('json', createDemoSchema), async (c
     body.sourceUrl || ''
   )]
 
-  if (body.menuItems && body.menuItems.length > 0) {
-    const catId = uuid()
-    statements.push(c.env.DB.prepare(
-      "INSERT INTO menu_categories (id, restaurant_id, name, sort_order) VALUES (?, ?, 'Menu', 0)"
-    ).bind(catId, id))
-    for (let i = 0; i < body.menuItems.length; i++) {
+  const categoryIds = new Map<string, string>()
+  for (const item of body.menuItems) {
+    if (!categoryIds.has(item.category)) {
+      const catId = uuid()
+      categoryIds.set(item.category, catId)
       statements.push(c.env.DB.prepare(
-        'INSERT INTO menu_items (id, category_id, name, price, sort_order) VALUES (?, ?, ?, ?, ?)'
-      ).bind(uuid(), catId, body.menuItems[i].name, body.menuItems[i].price || 0, i))
+        'INSERT INTO menu_categories (id, restaurant_id, name, sort_order) VALUES (?, ?, ?, ?)'
+      ).bind(catId, id, item.category, categoryIds.size - 1))
     }
+  }
+  for (let i = 0; i < body.menuItems.length; i++) {
+    const item = body.menuItems[i]
+    statements.push(c.env.DB.prepare(
+      `INSERT INTO menu_items
+       (id, category_id, name, description, price, image_url, sort_order)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      uuid(), categoryIds.get(item.category), item.name, item.description,
+      item.price || 0, item.imageUrl || '', i,
+    ))
   }
 
   try {

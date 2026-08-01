@@ -9,6 +9,16 @@ import {
   resetDatabase,
 } from './helpers'
 
+function completeMenu(firstPrice = 8) {
+  return Array.from({ length: 12 }, (_, index) => ({
+    category: `Category ${Math.floor(index / 3) + 1}`,
+    name: `Dish ${index + 1}`,
+    description: `A complete description for dish ${index + 1}`,
+    price: index === 0 ? firstPrice : 10 + index,
+    imageUrl: `https://images.example.com/dish-${index + 1}.jpg`,
+  }))
+}
+
 describe('feature: demo generation and duplicate prevention', () => {
   beforeEach(resetDatabase)
 
@@ -39,6 +49,7 @@ describe('feature: demo generation and duplicate prevention', () => {
       address: '10 Test Road',
       googlePlaceId: 'google-10',
       sourceUrl: 'https://maps.google.com/test',
+      menuItems: completeMenu(),
     }, await authCookie())
     const body = await response.json() as { id: string; slug: string }
     const row = await env.DB.prepare(
@@ -55,10 +66,7 @@ describe('feature: demo generation and duplicate prevention', () => {
   it('05 creates menu items atomically with the demo', async () => {
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: 'Menu Cafe',
-      menuItems: [
-        { name: 'Soup', price: 8 },
-        { name: 'Salad', price: 10 },
-      ],
+      menuItems: completeMenu(),
     }, await authCookie())
     const { id } = await response.json() as { id: string }
     const count = await env.DB.prepare(
@@ -66,7 +74,7 @@ describe('feature: demo generation and duplicate prevention', () => {
        JOIN menu_categories mc ON mc.id = mi.category_id
        WHERE mc.restaurant_id = ?`
     ).bind(id).first<{ count: number }>()
-    expect(count?.count).toBe(2)
+    expect(count?.count).toBe(12)
   })
 
   it('06 rejects a duplicate Google Place ID', async () => {
@@ -74,6 +82,7 @@ describe('feature: demo generation and duplicate prevention', () => {
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: 'Duplicate',
       googlePlaceId: 'duplicate-place',
+      menuItems: completeMenu(),
     }, await authCookie())
     expect(response.status).toBe(409)
     expect(await response.json()).toMatchObject({
@@ -86,6 +95,7 @@ describe('feature: demo generation and duplicate prevention', () => {
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: 'Same Name',
       googlePlaceId: 'new-place',
+      menuItems: completeMenu(),
     }, await authCookie())
     expect(await response.json()).toMatchObject({ slug: 'same-name-2' })
   })
@@ -94,6 +104,7 @@ describe('feature: demo generation and duplicate prevention', () => {
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: '测试餐厅',
       googlePlaceId: 'non-latin',
+      menuItems: completeMenu(),
     }, await authCookie())
     expect(await response.json()).toMatchObject({ slug: 'restaurant' })
   })
@@ -124,7 +135,7 @@ describe('feature: demo generation and duplicate prevention', () => {
   it('11 preserves decimal menu prices', async () => {
     const response = await jsonRequest('/api/outreach', 'POST', {
       name: 'Decimal Cafe',
-      menuItems: [{ name: 'Coffee', price: 4.75 }],
+      menuItems: completeMenu(4.75),
     }, await authCookie())
     const { id } = await response.json() as { id: string }
     const row = await env.DB.prepare(
@@ -140,6 +151,7 @@ describe('feature: demo generation and duplicate prevention', () => {
       name: 'International Cafe',
       googlePlaceId: 'international-url',
       sourceUrl: 'https://例子.测试/餐厅',
+      menuItems: completeMenu(),
     }, await authCookie())
     expect(response.status).toBe(201)
   })
@@ -157,6 +169,7 @@ describe('feature: demo generation and duplicate prevention', () => {
     const payload = {
       name: 'Concurrent Cafe',
       googlePlaceId: 'same-concurrent-place',
+      menuItems: completeMenu(),
     }
     const responses = await Promise.all([
       jsonRequest('/api/outreach', 'POST', payload, cookie),
@@ -167,5 +180,22 @@ describe('feature: demo generation and duplicate prevention', () => {
       'SELECT COUNT(*) AS count FROM restaurants WHERE google_place_id = ?',
     ).bind(payload.googlePlaceId).first<{ count: number }>()
     expect(count?.count).toBe(1)
+  })
+
+  it('15 rejects demos with fewer than 12 menu items', async () => {
+    const response = await jsonRequest('/api/outreach', 'POST', {
+      name: 'Thin Menu Cafe',
+      menuItems: completeMenu().slice(0, 8),
+    }, await authCookie())
+    expect(response.status).toBe(400)
+  })
+
+  it('16 rejects demos with fewer than 4 menu categories', async () => {
+    const menuItems = completeMenu().map((item) => ({ ...item, category: 'Menu' }))
+    const response = await jsonRequest('/api/outreach', 'POST', {
+      name: 'One Category Cafe',
+      menuItems,
+    }, await authCookie())
+    expect(response.status).toBe(400)
   })
 })

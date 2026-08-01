@@ -34,14 +34,24 @@ const lisbonMenu = [
 const universalMenu = [
   ["To Begin", "Market Croquettes", "Golden, crisp and served with a bright herb aioli", 9, "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=85"],
   ["To Begin", "Seasonal Burrata", "Market fruit, toasted seeds and house vinaigrette", 14, "https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?auto=format&fit=crop&w=800&q=85"],
+  ["To Begin", "Garden Salad", "Market leaves, shaved vegetables and citrus dressing", 11, "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=85"],
   ["From the Kitchen", "Chef's Signature", "A seasonal expression of the kitchen's favourite ingredients", 24, "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=85"],
   ["From the Kitchen", "Slow-Roasted Chicken", "Crisp potatoes, garden herbs and natural jus", 21, "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=800&q=85"],
+  ["From the Kitchen", "Braised Beef", "Slow-cooked beef, silky potato and red wine jus", 26, "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=85"],
   ["From the Sea", "Catch of the Day", "Open-fire fish, seasonal greens and citrus butter", 26, "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=85"],
+  ["From the Sea", "Charred Prawns", "Garlic, chilli, grilled lemon and fresh herbs", 19, "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=800&q=85"],
   ["Dessert", "Dark Chocolate Crémeux", "Sea salt, olive oil and toasted hazelnut", 9, "https://images.unsplash.com/photo-1579954115545-a95591f28bfc?auto=format&fit=crop&w=800&q=85"],
+  ["Dessert", "Citrus Tart", "Lemon curd, crisp pastry and softly whipped cream", 8, "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=800&q=85"],
+  ["Drinks", "House Spritz", "Seasonal citrus, sparkling wine and aromatic bitters", 10, "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=85"],
+  ["Drinks", "House Lemonade", "Fresh lemon, herbs and sparkling water", 5, "https://images.unsplash.com/photo-1621263764928-df1444c5e859?auto=format&fit=crop&w=800&q=85"],
 ] as const;
 
 export function getDemoMenu(restaurant: Restaurant): SiteMenuItem[] {
-  const location = `${restaurant.address} ${restaurant.description}`.toLowerCase();
+  return getDemoMenuForLocation(`${restaurant.address} ${restaurant.description}`);
+}
+
+export function getDemoMenuForLocation(locationInput: string): SiteMenuItem[] {
+  const location = locationInput.toLowerCase();
   const source = /lisbon|lisboa|portugal/.test(location) ? lisbonMenu : universalMenu;
 
   return source.map(([category, name, description, price, image], index) => ({

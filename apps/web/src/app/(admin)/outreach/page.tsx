@@ -2,11 +2,23 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getDemoMenuForLocation } from "@/lib/demo-menu";
 
 interface MenuItemInput {
+  category: string;
   name: string;
+  description: string;
   price: string;
+  imageUrl: string;
 }
+
+const blankMenuItem: MenuItemInput = {
+  category: "",
+  name: "",
+  description: "",
+  price: "",
+  imageUrl: "",
+};
 
 interface PlaceLead {
   placeId: string;
@@ -46,7 +58,7 @@ export default function OutreachPage() {
   const [hasSearched, setHasSearched] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [menuItems, setMenuItems] = useState<MenuItemInput[]>([
-    { name: "", price: "" },
+    blankMenuItem,
   ]);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -96,6 +108,13 @@ export default function OutreachPage() {
       sourceUrl: place.googleMapsUrl,
       description: prev.description || `${place.name} is a restaurant located at ${place.address}.`,
     }));
+    setMenuItems(getDemoMenuForLocation(place.address).map((item) => ({
+      category: item.category_name,
+      name: item.name,
+      description: item.description,
+      price: String(item.price),
+      imageUrl: item.image_url,
+    })));
     setError("");
     document.getElementById("restaurant-details")?.scrollIntoView({
       behavior: "smooth",
@@ -112,7 +131,7 @@ export default function OutreachPage() {
   }
 
   function addMenuItem() {
-    setMenuItems((prev) => [...prev, { name: "", price: "" }]);
+    setMenuItems((prev) => [...prev, { ...blankMenuItem }]);
   }
 
   function removeMenuItem(index: number) {
@@ -125,6 +144,12 @@ export default function OutreachPage() {
     setError("");
     if (!form.name.trim()) {
       setError("Restaurant name is required.");
+      return;
+    }
+    const completedMenu = menuItems.filter((item) => item.name.trim());
+    const categoryCount = new Set(completedMenu.map((item) => item.category.trim().toLowerCase())).size;
+    if (completedMenu.length < 12 || categoryCount < 4) {
+      setError("A sales-ready demo requires at least 12 dishes across 4 categories.");
       return;
     }
 
@@ -148,7 +173,10 @@ export default function OutreachPage() {
             .filter((item) => item.name.trim())
             .map((item) => ({
               name: item.name.trim(),
+              category: item.category.trim(),
+              description: item.description.trim(),
               price: parseFloat(item.price) || 0,
+              imageUrl: item.imageUrl.trim(),
             })),
         }),
       });
@@ -353,21 +381,27 @@ export default function OutreachPage() {
 
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700">Menu items</span>
+            <span className="text-sm font-medium text-gray-700">Menu items ({menuItems.filter((item) => item.name.trim()).length})</span>
             <button type="button" onClick={addMenuItem} disabled={isSubmitting}
               className="text-sm text-blue-600 hover:text-blue-800">+ Add item</button>
           </div>
           {menuItems.map((item, index) => (
-            <div key={index} className="flex gap-3 mb-2 items-start">
+            <div key={index} className="mb-3 grid gap-2 rounded-xl border border-slate-200 p-3 sm:grid-cols-[0.7fr_1fr_6rem_auto]">
+              <input value={item.category} onChange={(e) => updateMenuItem(index, "category", e.target.value)}
+                className="p-2 border rounded" disabled={isSubmitting} placeholder="Category" />
               <input value={item.name} onChange={(e) => updateMenuItem(index, "name", e.target.value)}
-                className="flex-1 p-2 border rounded" disabled={isSubmitting} placeholder="Item name" />
+                className="p-2 border rounded" disabled={isSubmitting} placeholder="Dish name" />
               <input type="number" min="0" step="0.01" value={item.price}
                 onChange={(e) => updateMenuItem(index, "price", e.target.value)}
-                className="w-24 p-2 border rounded" disabled={isSubmitting} placeholder="Price" />
+                className="p-2 border rounded" disabled={isSubmitting} placeholder="Price" />
               {menuItems.length > 1 && (
                 <button type="button" onClick={() => removeMenuItem(index)}
                   className="p-2 text-red-500" aria-label="Remove item">✕</button>
               )}
+              <input value={item.description} onChange={(e) => updateMenuItem(index, "description", e.target.value)}
+                className="p-2 border rounded sm:col-span-2" disabled={isSubmitting} placeholder="Dish description" />
+              <input type="url" value={item.imageUrl} onChange={(e) => updateMenuItem(index, "imageUrl", e.target.value)}
+                className="p-2 border rounded sm:col-span-2" disabled={isSubmitting} placeholder="Image URL" />
             </div>
           ))}
         </div>
