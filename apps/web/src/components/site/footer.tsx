@@ -14,7 +14,7 @@ export function Footer({
           {/* Brand */}
           <div>
             <h3 className="font-serif text-2xl text-white">{restaurantName}</h3>
-            <p className="mt-3 max-w-xs text-sm leading-6">A place for good food, warm company and evenings that linger.</p>
+            <p className="mt-3 max-w-xs text-sm leading-6">{address}</p>
           </div>
 
           {/* Address */}

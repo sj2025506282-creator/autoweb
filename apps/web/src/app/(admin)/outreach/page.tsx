@@ -46,6 +46,7 @@ const emptyForm = {
   googlePlaceId: "",
   sourceUrl: "",
   menuSourceUrl: "",
+  contentSourceUrl: "",
 };
 
 export default function OutreachPage() {
@@ -62,6 +63,8 @@ export default function OutreachPage() {
   ]);
   const [error, setError] = useState("");
   const [menuVerified, setMenuVerified] = useState(false);
+  const [contentVerified, setContentVerified] = useState(false);
+  const [imageRightsConfirmed, setImageRightsConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const visiblePlaces = useMemo(
@@ -107,10 +110,12 @@ export default function OutreachPage() {
       lng: place.lng ? String(place.lng) : "",
       googlePlaceId: place.placeId,
       sourceUrl: place.googleMapsUrl,
-      description: prev.description || `${place.name} is a restaurant located at ${place.address}.`,
+      description: "",
     }));
     setMenuItems([{ ...blankMenuItem }]);
     setMenuVerified(false);
+    setContentVerified(false);
+    setImageRightsConfirmed(false);
     setError("");
     document.getElementById("restaurant-details")?.scrollIntoView({
       behavior: "smooth",
@@ -152,6 +157,14 @@ export default function OutreachPage() {
       setError("Add the restaurant's public menu source and confirm every item was verified.");
       return;
     }
+    if (!form.contentSourceUrl.trim() || !contentVerified) {
+      setError("Add a public source for the restaurant profile and confirm all facts were verified.");
+      return;
+    }
+    if (form.imageUrl.trim() && !imageRightsConfirmed) {
+      setError("Confirm permission or licensing before using a restaurant image.");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -171,6 +184,9 @@ export default function OutreachPage() {
           sourceUrl: form.sourceUrl,
           menuSourceUrl: form.menuSourceUrl.trim(),
           menuVerified,
+          contentSourceUrl: form.contentSourceUrl.trim(),
+          contentVerified,
+          imageRightsConfirmed,
           menuItems: menuItems
             .filter((item) => item.name.trim())
             .map((item) => ({
@@ -361,6 +377,21 @@ export default function OutreachPage() {
             className="block w-full p-2 border rounded mt-1" rows={3} disabled={isSubmitting} />
         </label>
 
+        <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+          <label className="block text-sm font-medium text-emerald-950">
+            Restaurant profile source URL
+            <input type="url" value={form.contentSourceUrl}
+              onChange={(e) => updateField("contentSourceUrl", e.target.value)}
+              className="mt-2 block w-full rounded border border-emerald-200 bg-white p-2"
+              placeholder="Official site or business-managed listing" />
+          </label>
+          <label className="mt-3 flex items-start gap-2 text-sm text-emerald-950">
+            <input type="checkbox" checked={contentVerified}
+              onChange={(e) => setContentVerified(e.target.checked)} className="mt-1" />
+            <span>I checked the description, address, phone, hours and claims against this source.</span>
+          </label>
+        </div>
+
         <div className="grid sm:grid-cols-2 gap-4 mb-4">
           <label className="text-sm font-medium text-gray-700">
             Latitude
@@ -380,6 +411,11 @@ export default function OutreachPage() {
             className="block w-full p-2 border rounded mt-1" disabled={isSubmitting}
             placeholder="Optional licensed image URL" />
         </label>
+        {form.imageUrl.trim() && <label className="mb-6 flex items-start gap-2 text-sm text-gray-700">
+          <input type="checkbox" checked={imageRightsConfirmed}
+            onChange={(e) => setImageRightsConfirmed(e.target.checked)} className="mt-1" />
+          <span>I confirmed this image belongs to the restaurant or is licensed for this use.</span>
+        </label>}
 
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">

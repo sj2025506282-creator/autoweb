@@ -67,6 +67,9 @@ const createDemoSchema = z.object({
   sourceUrl: z.string().url().max(2048).optional().or(z.literal('')),
   menuSourceUrl: z.string().url().max(2048),
   menuVerified: z.literal(true),
+  contentSourceUrl: z.string().url().max(2048),
+  contentVerified: z.literal(true),
+  imageRightsConfirmed: z.boolean(),
   menuItems: z.array(z.object({
     category: z.string().trim().min(1),
     name: z.string().trim().min(1),
@@ -81,6 +84,13 @@ const createDemoSchema = z.object({
       code: z.ZodIssueCode.custom,
       path: ['menuItems'],
       message: 'A sales-ready demo requires at least 4 menu categories.',
+    })
+  }
+  if ((body.imageUrls?.length || 0) > 0 && !body.imageRightsConfirmed) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['imageRightsConfirmed'],
+      message: 'Image rights must be confirmed before using restaurant photos.',
     })
   }
 })
@@ -117,8 +127,9 @@ app.post('/', jwtAuth, adminOnly, zValidator('json', createDemoSchema), async (c
   const statements: D1PreparedStatement[] = [c.env.DB.prepare(
     `INSERT INTO restaurants (
        id, name, slug, phone, email, address, lat, lng, status, cover_image,
-       description, google_place_id, source_url, menu_source_url, menu_verified
-     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'demo', ?, ?, ?, ?, ?, 1)`
+       description, google_place_id, source_url, menu_source_url, menu_verified,
+       content_source_url, content_verified, image_rights_confirmed
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'demo', ?, ?, ?, ?, ?, 1, ?, 1, ?)`
   ).bind(
     id,
     body.name,
@@ -132,7 +143,9 @@ app.post('/', jwtAuth, adminOnly, zValidator('json', createDemoSchema), async (c
     body.description || '',
     body.googlePlaceId || '',
     body.sourceUrl || '',
-    body.menuSourceUrl
+    body.menuSourceUrl,
+    body.contentSourceUrl,
+    body.imageRightsConfirmed ? 1 : 0
   )]
 
   const categoryIds = new Map<string, string>()

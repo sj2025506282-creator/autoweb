@@ -16,6 +16,9 @@ export interface Restaurant {
   source_url?: string;
   menu_source_url?: string;
   menu_verified?: number;
+  content_source_url?: string;
+  content_verified?: number;
+  image_rights_confirmed?: number;
   outreach_sent_at?: string | null;
   template_id: string;
   domain_custom: string;
