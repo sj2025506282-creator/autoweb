@@ -32,6 +32,45 @@ function capture(command, args, input = '') {
   })
 }
 
+async function curlJson(url, token, project, headers = []) {
+  const raw = await capture('curl', [
+    '--fail-with-body', '--silent', '--show-error', url,
+    '--header', `Authorization: Bearer ${token}`,
+    '--header', `X-Goog-User-Project: ${project}`,
+    ...headers.flatMap((header) => ['--header', header]),
+  ])
+  return JSON.parse(raw)
+}
+
+async function placePhotoPaths(placeId, token, project, maximum) {
+  const details = await curlJson(
+    `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`,
+    token,
+    project,
+    ['X-Goog-FieldMask: displayName,googleMapsUri,photos'],
+  )
+  const photos = (details.photos || []).slice(0, maximum)
+  if (photos.length === 0) throw new Error('Places returned no photos for this business.')
+  const temporaryDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'autoweb-place-photos-'))
+  const paths = []
+  for (let index = 0; index < photos.length; index += 1) {
+    const outputPath = path.join(temporaryDirectory, `place-photo-${index + 1}.jpg`)
+    await capture('curl', [
+      '--fail-with-body', '--silent', '--show-error', '--location',
+      `https://places.googleapis.com/v1/${photos[index].name}/media?maxWidthPx=1600&maxHeightPx=1600`,
+      '--header', `Authorization: Bearer ${token}`,
+      '--header', `X-Goog-User-Project: ${project}`, '--output', outputPath,
+    ])
+    paths.push(outputPath)
+  }
+  return {
+    paths,
+    sourceUrl: details.googleMapsUri || '',
+    displayName: details.displayName?.text || '',
+    temporaryDirectory,
+  }
+}
+
 async function configuredProject() {
   try {
     const config = await fs.readFile(path.join(os.homedir(), '.config/gcloud/configurations/config_default'), 'utf8')
@@ -69,20 +108,33 @@ function mimeType(filePath) {
 }
 
 async function main() {
-  const imagePaths = values('image')
-  if (imagePaths.length === 0) throw new Error('Pass one or more menu images with --image /path/to/image.jpg')
-  if (imagePaths.length > 10) throw new Error('At most 10 images are supported per extraction.')
+  let imagePaths = values('image')
+  const placeId = value('place-id')
+  if (imagePaths.length === 0 && !placeId) {
+    throw new Error('Pass --image /path/to/image.jpg or --place-id PLACE_ID')
+  }
 
   const project = value('project') || process.env.GOOGLE_CLOUD_PROJECT || await configuredProject()
   const location = value('location', 'us-central1')
   const model = value('model', 'gemini-2.5-flash')
-  const sourceUrl = value('source-url')
+  let sourceUrl = value('source-url')
   if (!project) throw new Error('No Google Cloud project configured.')
+
+  const token = await accessToken()
+  let temporaryDirectory = ''
+  if (placeId) {
+    const placePhotos = await placePhotoPaths(placeId, token, project, Number(value('max-photos', '10')))
+    imagePaths = [...imagePaths, ...placePhotos.paths]
+    sourceUrl ||= placePhotos.sourceUrl
+    temporaryDirectory = placePhotos.temporaryDirectory
+    process.stderr.write(`Downloaded ${placePhotos.paths.length} Place Photos for ${placePhotos.displayName || placeId}.\n`)
+  }
+  if (imagePaths.length > 10) throw new Error('At most 10 images are supported per extraction.')
 
   const imageParts = await Promise.all(imagePaths.map(async (filePath) => ({
     inlineData: { mimeType: mimeType(filePath), data: await fs.readFile(filePath, 'base64') },
   })))
-  const prompt = `Extract only menu items visibly supported by these images. Do not invent dishes, descriptions, categories, prices, or currencies. Keep a caption such as "Pork Belly 1550" as the dish name unless the image clearly marks 1550 as a price. Use an empty description and null price when absent. Confidence is 0 to 1. evidencePhoto is the 1-based image number. Return JSON only.`
+  const prompt = `This is strict OCR, not food recognition. Output a menu item only when its dish name is visibly written as text inside an input image. Never infer a dish name from how food looks. Google Maps UI captions are valid only when they are visible in a screenshot; they are absent from raw Place Photos. Do not invent descriptions, categories, prices, or currencies. Keep a caption such as "Pork Belly 1550" as the dish name unless the image clearly marks 1550 as a price. Use an empty description and null price when absent. If no dish names are written in an image, output no items for it and add a warning. Confidence is 0 to 1. evidencePhoto is the 1-based image number. Return JSON only.`
   const schema = {
     type: 'OBJECT',
     required: ['currency', 'items', 'warnings'],
@@ -104,7 +156,6 @@ async function main() {
     },
   }
 
-  const token = await accessToken()
   const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${project}/locations/${location}/publishers/google/models/${model}:generateContent`
   const requestBody = JSON.stringify({
     contents: [{ role: 'user', parts: [{ text: prompt }, ...imageParts] }],
@@ -132,6 +183,7 @@ async function main() {
   } else {
     process.stdout.write(`${output}\n`)
   }
+  if (temporaryDirectory) await fs.rm(temporaryDirectory, { recursive: true, force: true })
 }
 
 main().catch((error) => {

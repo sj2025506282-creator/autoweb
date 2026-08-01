@@ -85,10 +85,15 @@ Google Cloud 项目需要启用 Places API (New) 和结算。搜索会请求
 ```bash
 pnpm menu:extract -- --image /path/menu-1.jpg --image /path/menu-2.jpg \
   --source-url 'https://maps.google.com/...' --out /tmp/menu.json
+
+# 或者用同一套 ADC 从 Places 下载商家原图后提取图片中可见的菜单文字：
+pnpm menu:extract -- --place-id 'PLACE_ID' --max-photos 10 --out /tmp/menu.json
 ```
 
 将输出 JSON 粘贴到后台 Outreach 的导入框。模型只负责 OCR/结构化草稿；
 管理员仍需逐项检查菜名、分类、描述和价格，导入不会自动标记为已核验。
+Place Photos 原图不包含 Google Maps 界面叠加的图片标题，因此普通菜品照片不能
+作为准确菜名或价格的依据；只有图片本身出现菜单文字时才应提取。
 
 ## 本地验收
 
