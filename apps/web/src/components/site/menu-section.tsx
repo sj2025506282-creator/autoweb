@@ -47,8 +47,9 @@ export function MenuSection({
             {categoryItems.map((item) => (
               <div
                 key={item.id}
-                className="group flex gap-5 rounded-2xl border border-stone-200/80 bg-white p-3 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-stone-200/50"
+                className="group relative flex gap-5 overflow-hidden rounded-2xl border border-stone-200/80 bg-[#fffdf9] p-3 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-stone-300/40"
               >
+                <span className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-amber-400 transition duration-300 group-hover:scale-x-100" />
                 {/* Image thumbnail */}
                 {item.image_url && (
                   <div className="h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl bg-stone-100">

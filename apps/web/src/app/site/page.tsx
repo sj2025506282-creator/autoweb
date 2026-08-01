@@ -25,7 +25,53 @@ export default async function SiteHomePage() {
     <>
       <HeroBanner restaurant={restaurant} />
 
-      <section className="bg-[#f7f3eb] px-5 py-20 sm:py-28">
+      <div className="overflow-hidden bg-amber-300 py-3 text-stone-950">
+        <div className="site-marquee flex w-max items-center gap-8 whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.24em]">
+          {[0, 1].map((copy) => (
+            <span key={copy} className="flex items-center gap-8" aria-hidden={copy === 1}>
+              <span>Season-led cooking</span><span>✦</span><span>Local character</span><span>✦</span>
+              <span>Good wine</span><span>✦</span><span>Long evenings</span><span>✦</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <section className="overflow-hidden bg-[#f7f3eb] px-5 py-20 sm:px-8 sm:py-28">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+          <div className="relative mx-auto w-full max-w-lg pb-12 pr-10 sm:pb-16 sm:pr-16">
+            <div className="aspect-[4/5] overflow-hidden bg-stone-200">
+              <div className="h-full w-full bg-[url('https://images.unsplash.com/photo-1516211697506-8360dbcfe9a4?auto=format&fit=crop&w=1200&q=90')] bg-cover bg-center transition duration-700 hover:scale-105" />
+            </div>
+            <div className="absolute bottom-0 right-0 aspect-square w-36 overflow-hidden border-8 border-[#f7f3eb] bg-stone-300 sm:w-48">
+              <div className="h-full w-full bg-[url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=700&q=90')] bg-cover bg-center" />
+            </div>
+            <span className="absolute -left-3 top-8 bg-stone-950 px-3 py-6 text-[10px] font-semibold uppercase tracking-[0.22em] text-white [writing-mode:vertical-rl]">
+              Made in the neighbourhood
+            </span>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-700">Our point of view</p>
+            <h2 className="mt-5 max-w-2xl font-serif text-4xl leading-[1.05] tracking-tight text-stone-950 sm:text-6xl">
+              The best meals feel both familiar and entirely new.
+            </h2>
+            <div className="mt-8 grid gap-6 border-t border-stone-300 pt-8 sm:grid-cols-2">
+              <p className="text-sm leading-7 text-stone-600">
+                We cook with the rhythm of the market—choosing honest ingredients and letting each one speak clearly on the plate.
+              </p>
+              <p className="text-sm leading-7 text-stone-600">
+                The result is generous food with local soul, served in a room designed for conversation, celebration and one more glass.
+              </p>
+            </div>
+            <div className="mt-9 flex gap-10">
+              <div><strong className="block font-serif text-3xl text-stone-950">Local</strong><span className="text-xs uppercase tracking-wider text-stone-500">by nature</span></div>
+              <div><strong className="block font-serif text-3xl text-stone-950">Daily</strong><span className="text-xs uppercase tracking-wider text-stone-500">made fresh</span></div>
+              <div><strong className="block font-serif text-3xl text-stone-950">Warm</strong><span className="text-xs uppercase tracking-wider text-stone-500">hospitality</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white px-5 py-20 sm:py-28">
         <div className="mx-auto max-w-6xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-700">At the table</p>
           <h2 className="mt-4 font-serif text-4xl text-stone-900 sm:text-6xl">Food with a sense of place</h2>
@@ -43,6 +89,15 @@ export default async function SiteHomePage() {
           >
             View the complete menu →
           </Link>
+        </div>
+      </section>
+
+      <section className="grid h-[70vh] min-h-[560px] grid-cols-2 grid-rows-2 gap-1 bg-stone-950 p-1 md:grid-cols-4">
+        <div className="col-span-2 row-span-2 overflow-hidden"><div className="h-full bg-[url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1500&q=90')] bg-cover bg-center transition duration-700 hover:scale-105" /></div>
+        <div className="overflow-hidden"><div className="h-full bg-[url('https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=900&q=90')] bg-cover bg-center transition duration-700 hover:scale-105" /></div>
+        <div className="overflow-hidden"><div className="h-full bg-[url('https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=900&q=90')] bg-cover bg-center transition duration-700 hover:scale-105" /></div>
+        <div className="col-span-2 flex items-center justify-center bg-amber-300 p-6 text-center text-stone-950">
+          <div><p className="text-xs font-semibold uppercase tracking-[0.25em]">Come as you are</p><p className="mt-3 font-serif text-3xl italic sm:text-4xl">Leave a little happier.</p></div>
         </div>
       </section>
 
