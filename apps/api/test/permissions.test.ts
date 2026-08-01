@@ -126,4 +126,28 @@ describe('feature: authentication and restaurant authorization boundaries', () =
     const objects = await env.IMAGES.list()
     expect(objects.objects).toHaveLength(0)
   })
+
+  it('12 returns an empty public menu envelope for a demo', async () => {
+    await insertRestaurant()
+    const response = await apiRequest('/api/restaurants/restaurant-1/menu')
+    expect(response.status).toBe(200)
+    expect(await response.json()).toEqual({ categories: [], items: [] })
+  })
+
+  it('13 includes the category name with public menu items', async () => {
+    await insertRestaurant()
+    await env.DB.prepare(
+      'INSERT INTO menu_categories (id, restaurant_id, name) VALUES (?, ?, ?)',
+    ).bind('category-1', 'restaurant-1', 'Dinner').run()
+    await env.DB.prepare(
+      'INSERT INTO menu_items (id, category_id, name, price) VALUES (?, ?, ?, ?)',
+    ).bind('item-1', 'category-1', 'House Special', 18).run()
+    const response = await apiRequest('/api/restaurants/restaurant-1/menu')
+    const data = await response.json() as {
+      items: Array<{ name: string; category_name: string }>
+    }
+    expect(data.items).toMatchObject([
+      { name: 'House Special', category_name: 'Dinner' },
+    ])
+  })
 })

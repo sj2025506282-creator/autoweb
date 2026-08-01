@@ -21,7 +21,7 @@ app.get('/:id/menu', async (c) => {
   ).bind(id).all()
 
   const items = await c.env.DB.prepare(
-    `SELECT mi.* FROM menu_items mi
+    `SELECT mi.*, mc.name AS category_name FROM menu_items mi
      JOIN menu_categories mc ON mi.category_id = mc.id
      WHERE mc.restaurant_id = ? ORDER BY mi.sort_order`
   ).bind(id).all()

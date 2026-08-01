@@ -3,11 +3,15 @@ import { apiFetch } from "@/lib/api-client";
 import { MenuSection } from "@/components/site/menu-section";
 import type { MenuItem } from "@autoweb/shared";
 
+interface MenuResponse {
+  items: (MenuItem & { category_name: string })[];
+}
+
 export default async function SiteMenuPage() {
   const restaurant = await getRestaurantFromHost();
   if (!restaurant) return null;
 
-  const items = await apiFetch<(MenuItem & { category_name: string })[]>(
+  const menu = await apiFetch<MenuResponse>(
     '/api/restaurants/' + restaurant.id + '/menu'
   );
 
@@ -21,7 +25,7 @@ export default async function SiteMenuPage() {
         </p>
       </div>
 
-      <MenuSection items={items} />
+      <MenuSection items={menu.items} />
     </section>
   );
 }

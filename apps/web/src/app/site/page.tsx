@@ -5,13 +5,18 @@ import { MenuSection } from "@/components/site/menu-section";
 import Link from "next/link";
 import type { MenuItem } from "@autoweb/shared";
 
+interface MenuResponse {
+  items: (MenuItem & { category_name: string })[];
+}
+
 export default async function SiteHomePage() {
   const restaurant = await getRestaurantFromHost();
   if (!restaurant) return null;
 
-  const featuredItems = await apiFetch<(MenuItem & { category_name: string })[]>(
-    '/api/restaurants/' + restaurant.id + '/menu?limit=6'
+  const menu = await apiFetch<MenuResponse>(
+    '/api/restaurants/' + restaurant.id + '/menu'
   );
+  const featuredItems = menu.items.slice(0, 6);
 
   return (
     <>
