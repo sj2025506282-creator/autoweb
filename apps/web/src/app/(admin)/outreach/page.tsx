@@ -65,6 +65,8 @@ export default function OutreachPage() {
   const [menuVerified, setMenuVerified] = useState(false);
   const [contentVerified, setContentVerified] = useState(false);
   const [imageRightsConfirmed, setImageRightsConfirmed] = useState(false);
+  const [menuImport, setMenuImport] = useState("");
+  const [extractionNote, setExtractionNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const visiblePlaces = useMemo(
@@ -137,6 +139,46 @@ export default function OutreachPage() {
 
   function removeMenuItem(index: number) {
     setMenuItems((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function importExtractedMenu() {
+    setExtractionNote("");
+    setError("");
+    try {
+      const data = JSON.parse(menuImport) as {
+        sourceUrl?: string;
+        warnings?: string[];
+        items?: Array<{
+          category: string;
+          name: string;
+          description: string;
+          price: number | null;
+          confidence: number;
+        }>;
+      };
+      const items = Array.isArray(data.items) ? data.items.filter((item) => item?.name?.trim()) : [];
+      if (items.length === 0) throw new Error("No items");
+      setMenuItems(items.map((item) => ({
+        category: item.category,
+        name: item.name,
+        description: item.description,
+        price: item.price === null ? "" : String(item.price),
+        imageUrl: "",
+      })));
+      setForm((previous) => ({
+        ...previous,
+        menuSourceUrl: data.sourceUrl || previous.sourceUrl,
+      }));
+      setMenuVerified(false);
+      const lowConfidence = items.filter((item) => item.confidence < 0.7).length;
+      setExtractionNote(
+        `Imported ${items.length} extracted items. ` +
+        `${lowConfidence} need extra attention. Review every field before verification.` +
+        (data.warnings?.length ? ` ${data.warnings.join(" ")}` : ""),
+      );
+    } catch {
+      setError("Invalid extraction JSON. Run pnpm menu:extract and paste its output here.");
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -418,11 +460,30 @@ export default function OutreachPage() {
         </label>}
 
         <div className="mb-6">
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex flex-wrap justify-between gap-3 items-center mb-2">
             <span className="text-sm font-medium text-gray-700">Menu items ({menuItems.filter((item) => item.name.trim()).length})</span>
-            <button type="button" onClick={addMenuItem} disabled={isSubmitting}
-              className="text-sm text-blue-600 hover:text-blue-800">+ Add item</button>
+            <div className="flex items-center gap-3">
+              <button type="button" onClick={addMenuItem} disabled={isSubmitting}
+                className="text-sm text-blue-600 hover:text-blue-800">+ Add item</button>
+            </div>
           </div>
+          <div className="mb-4 rounded-xl border border-violet-200 bg-violet-50 p-3">
+            <label className="block text-sm font-medium text-violet-950">
+              Import local Vertex extraction JSON
+              <textarea value={menuImport} onChange={(event) => setMenuImport(event.target.value)}
+                className="mt-2 block min-h-24 w-full rounded-lg border border-violet-200 bg-white p-2 font-mono text-xs"
+                placeholder='Run: pnpm menu:extract -- --image /path/menu.jpg --out /tmp/menu.json' />
+            </label>
+            <button type="button" onClick={importExtractedMenu} disabled={isSubmitting || !menuImport.trim()}
+              className="mt-2 rounded-lg bg-violet-700 px-3 py-2 text-sm font-semibold text-white disabled:opacity-50">
+              Import draft
+            </button>
+          </div>
+          {extractionNote && (
+            <p className="mb-4 rounded-xl border border-violet-200 bg-violet-50 p-3 text-sm leading-6 text-violet-800">
+              {extractionNote}
+            </p>
+          )}
           {menuItems.map((item, index) => (
             <div key={index} className="mb-3 grid gap-2 rounded-xl border border-slate-200 p-3 sm:grid-cols-[0.7fr_1fr_6rem_auto]">
               <input value={item.category} onChange={(e) => updateMenuItem(index, "category", e.target.value)}

@@ -7,6 +7,7 @@
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "test": "pnpm --filter @autoweb/api test",
+    "menu:extract": "node scripts/extract-menu-vertex.mjs",
     "check:size": "node scripts/check-source-size.mjs",
     "check": "pnpm check:size && pnpm test && pnpm lint && pnpm build"
   }

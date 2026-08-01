@@ -78,6 +78,18 @@ Google Cloud 项目需要启用 Places API (New) 和结算。搜索会请求
 `websiteUri` 来判断商家是否有官网，该字段属于 Google Places 的付费字段；
 上线前应设置 API 配额和预算告警。
 
+菜单图片在本地通过 Google Cloud ADC 和 Vertex Gemini 生成草稿，不需要
+`GEMINI_API_KEY`，也不会把本机凭据部署到 Cloudflare。先按 Veo 相同方式完成
+`gcloud auth application-default login`，然后运行：
+
+```bash
+pnpm menu:extract -- --image /path/menu-1.jpg --image /path/menu-2.jpg \
+  --source-url 'https://maps.google.com/...' --out /tmp/menu.json
+```
+
+将输出 JSON 粘贴到后台 Outreach 的导入框。模型只负责 OCR/结构化草稿；
+管理员仍需逐项检查菜名、分类、描述和价格，导入不会自动标记为已核验。
+
 ## 本地验收
 
 ```bash
@@ -93,7 +105,7 @@ API_BASE_URL=https://api.example.com \
 
 `pnpm check:size` 会扫描源码和迁移文件，任何文件超过 800 行都会失败。
 API 自动化测试运行在 Cloudflare Workers Vitest Pool 中，并使用真实 D1
-迁移；当前 8 个功能点共 104 条用例，每个功能点至少 10 条。完整缺陷闭环见
+迁移；当前 8 个功能点共 108 条用例，每个功能点至少 10 条。完整缺陷闭环见
 [`docs/testing/AUTOWEB_TEST_REPORT_2026-07-30.md`](docs/testing/AUTOWEB_TEST_REPORT_2026-07-30.md)。
 
 ## 当前外部依赖
