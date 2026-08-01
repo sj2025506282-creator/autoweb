@@ -8,10 +8,19 @@ const verifiedNossaCasaMenu = [
   ["To Start", "Tuna Tartar", "Fried wonton, olives, tomato confit and chilli oil mayo", 15.5, ""],
   ["To Start", "Angus Tartare", "Beef tartare, chilli oil, cured egg yolk, blueberries and grilled sourdough", 13.5, ""],
   ["To Start", "Cottage Cheese, Grapes", "Seasoned cottage cheese, pomegranate, flamed plums, grapes and curry seeds", 9.5, ""],
-  ["To Start", "Pumpkin & Sweet Potato Gnocchi", "Grilled pumpkin, kefir buttermilk, mole verde and sweet potato chips", 10.5, ""],
+  ["Pasta & Vegetables", "Pumpkin & Sweet Potato Gnocchi", "Grilled pumpkin, kefir buttermilk, mole verde and sweet potato chips", 10.5, ""],
+  ["From the Sea", "Cured Fish of the Day", "", 0, ""],
+  ["From the Sea", "Scallops", "", 0, ""],
+  ["From the Sea", "Seafood Curry", "", 0, ""],
+  ["From the Sea", "Clams Rice", "", 0, ""],
+  ["From the Land", "Beef Tartare", "", 0, ""],
+  ["From the Land", "Galta de Ternera", "", 0, ""],
+  ["From the Land", "Pork Cheek Tacos", "", 0, ""],
+  ["From the Land", "Beef Cheek Croquete", "", 0, ""],
+  ["From the Land", "Pork Ribs", "", 0, ""],
 ] as const;
 
-export const NOSSA_CASA_MENU_SOURCE = "https://www.tripadvisor.co.uk/Restaurant_Review-g189158-d15087513-Reviews-A_Nossa_Casa-Lisbon_Lisbon_District_Central_Portugal.html";
+export const NOSSA_CASA_MENU_SOURCE = "https://www.google.com/maps/place/A+Nossa+Casa/@38.7118452,-9.1449444,17z/data=!4m7!3m6!1s0xd19353946e25371:0xc085f0ed901c4ee0!8m2!3d38.7118452!4d-9.1449444!10e9!16s%2Fg%2F11f9z8g95f";
 
 export function getDemoMenu(restaurant: Restaurant): SiteMenuItem[] {
   return getDemoMenuForLocation(`${restaurant.address} ${restaurant.description}`);

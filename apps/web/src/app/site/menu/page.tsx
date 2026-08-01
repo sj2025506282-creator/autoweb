@@ -34,7 +34,7 @@ export default async function SiteMenuPage() {
         {usesVerifiedListing && (
           <a href={NOSSA_CASA_MENU_SOURCE} target="_blank" rel="noopener noreferrer"
             className="mt-4 inline-block text-xs font-semibold text-amber-700 underline underline-offset-4">
-            Verified menu source ↗
+            View menu evidence ↗
           </a>
         )}
       </div>
