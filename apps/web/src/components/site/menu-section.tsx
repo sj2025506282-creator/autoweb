@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import type { MenuItem } from "@/types";
 
 interface GroupedItems {
@@ -13,6 +14,19 @@ function groupByCategory(items: (MenuItem & { category_name: string })[]): Group
     groups[cat].push(item);
   }
   return groups;
+}
+
+function spriteStyle(imageUrl: string): CSSProperties | null {
+  const match = imageUrl.match(/^(.*)#tile-(\d+)$/);
+  if (!match) return null;
+  const tile = Number(match[2]);
+  const column = tile % 4;
+  const row = Math.floor(tile / 4);
+  return {
+    backgroundImage: `url("${match[1]}")`,
+    backgroundPosition: `${column * 100 / 3}% ${row * 100 / 3}%`,
+    backgroundSize: "400% 400%",
+  };
 }
 
 export function MenuSection({
@@ -51,7 +65,11 @@ export function MenuSection({
               >
                 <span className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-amber-400 transition duration-300 group-hover:scale-x-100" />
                 {/* Image thumbnail */}
-                {item.image_url && (
+                {item.image_url && spriteStyle(item.image_url) && (
+                  <div role="img" aria-label={item.name} style={spriteStyle(item.image_url) || undefined}
+                    className="h-28 w-28 flex-shrink-0 rounded-xl bg-stone-100 bg-no-repeat transition duration-500 group-hover:scale-105" />
+                )}
+                {item.image_url && !spriteStyle(item.image_url) && (
                   <div className="h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl bg-stone-100">
                     <Image
                       src={item.image_url}

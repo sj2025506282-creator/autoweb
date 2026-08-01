@@ -21,6 +21,7 @@ const verifiedNossaCasaMenu = [
 ] as const;
 
 export const NOSSA_CASA_MENU_SOURCE = "https://www.google.com/maps/place/A+Nossa+Casa/@38.7118452,-9.1449444,17z/data=!4m7!3m6!1s0xd19353946e25371:0xc085f0ed901c4ee0!8m2!3d38.7118452!4d-9.1449444!10e9!16s%2Fg%2F11f9z8g95f";
+const NOSSA_CASA_MENU_SPRITE = "/images/a-nossa-casa-menu-sprite-v1.webp";
 
 export function getDemoMenu(restaurant: Restaurant): SiteMenuItem[] {
   return getDemoMenuForLocation(`${restaurant.address} ${restaurant.description}`);
@@ -37,7 +38,7 @@ export function getDemoMenuForLocation(locationInput: string): SiteMenuItem[] {
     name,
     description,
     price,
-    image_url: image,
+    image_url: image || `${NOSSA_CASA_MENU_SPRITE}#tile-${index}`,
     sort_order: index,
   }));
 }
