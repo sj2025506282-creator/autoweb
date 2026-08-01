@@ -7,7 +7,11 @@ import { ADMIN, apiRequest, jsonRequest, resetDatabase } from './helpers'
 
 const encoder = new TextEncoder()
 
-async function insertUser(password = 'LegacyPass123', role = 'admin') {
+async function insertUser(
+  password = 'LegacyPass123',
+  role = 'admin',
+  email = ADMIN.email,
+) {
   const salt = '0123456789abcdef'
   const digest = await crypto.subtle.digest(
     'SHA-256',
@@ -18,7 +22,7 @@ async function insertUser(password = 'LegacyPass123', role = 'admin') {
     .join('')
   await env.DB.prepare(
     'INSERT INTO users (id, email, password_hash, role) VALUES (?, ?, ?, ?)',
-  ).bind(ADMIN.id, ADMIN.email, `${salt}:${hash}`, role).run()
+  ).bind(ADMIN.id, email, `${salt}:${hash}`, role).run()
 }
 
 async function login(email = ADMIN.email, password = 'LegacyPass123') {
@@ -85,8 +89,13 @@ describe('feature: authentication and password lifecycle', () => {
     expect((await login(ADMIN.email, 'WrongPass123')).status).toBe(401)
   })
 
-  it('08 validates malformed login email addresses', async () => {
-    expect((await login('invalid-email')).status).toBe(400)
+  it('08 accepts a username-style administrator account', async () => {
+    await insertUser('111111', 'admin', 'admin')
+    expect((await login('admin', '111111')).status).toBe(200)
+  })
+
+  it('08b rejects an empty login account', async () => {
+    expect((await login('')).status).toBe(400)
   })
 
   it('09 rejects a signed JWT with an unsupported role', async () => {

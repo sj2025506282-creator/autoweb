@@ -40,8 +40,9 @@ export default function LoginPage() {
         <h1 className="text-2xl font-bold mb-6 text-center">AutoWeb Admin</h1>
         {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
         <input
-          type="email"
-          placeholder="Email"
+          type="text"
+          autoComplete="username"
+          placeholder="Account or email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full p-2 mb-4 border rounded disabled:bg-gray-50 disabled:text-gray-400"
