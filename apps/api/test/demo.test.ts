@@ -22,6 +22,9 @@ function completeMenu(firstPrice = 8) {
 const verifiedMenu = {
   menuSourceUrl: 'https://restaurant.example.com/menu',
   menuVerified: true as const,
+  contentSourceUrl: 'https://restaurant.example.com/about',
+  contentVerified: true as const,
+  imageRightsConfirmed: false,
 }
 
 describe('feature: demo generation and duplicate prevention', () => {
