@@ -93,7 +93,7 @@ API_BASE_URL=https://api.example.com \
 
 `pnpm check:size` 会扫描源码和迁移文件，任何文件超过 800 行都会失败。
 API 自动化测试运行在 Cloudflare Workers Vitest Pool 中，并使用真实 D1
-迁移；当前 8 个功能点共 101 条用例，每个功能点至少 10 条。完整缺陷闭环见
+迁移；当前 8 个功能点共 104 条用例，每个功能点至少 10 条。完整缺陷闭环见
 [`docs/testing/AUTOWEB_TEST_REPORT_2026-07-30.md`](docs/testing/AUTOWEB_TEST_REPORT_2026-07-30.md)。
 
 ## 当前外部依赖
