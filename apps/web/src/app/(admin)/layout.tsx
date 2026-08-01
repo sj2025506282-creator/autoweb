@@ -13,11 +13,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
   if (!user) { redirect("/login"); }
   return (
-    <div className="flex min-h-screen flex-col md:h-screen md:flex-row">
+    <div className="flex min-h-screen flex-col bg-slate-50 md:h-screen md:flex-row">
       <Sidebar user={user} />
       <div className="flex min-w-0 flex-1 flex-col md:overflow-hidden">
         <Header user={user} />
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );
