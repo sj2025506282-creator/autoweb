@@ -1,9 +1,11 @@
 export function Footer({
   restaurantName,
   address,
+  isDemo = false,
 }: {
   restaurantName: string;
   address?: string;
+  isDemo?: boolean;
 }) {
   const year = new Date().getFullYear();
 
@@ -31,10 +33,15 @@ export function Footer({
               Powered by{" "}
               <span className="font-medium text-stone-300">AutoWeb</span>
             </p>
+            {isDemo && (
+              <p className="mt-3 text-xs leading-5 text-stone-500">
+                Unofficial website demo. Content and availability require restaurant approval.
+              </p>
+            )}
           </div>
         </div>
         <div className="mt-12 border-t border-white/10 pt-6 text-xs text-stone-600">
-          &copy; {year} {restaurantName}. All rights reserved.
+          {isDemo ? `Demo concept for ${restaurantName}` : <>&copy; {year} {restaurantName}. All rights reserved.</>}
         </div>
       </div>
     </footer>

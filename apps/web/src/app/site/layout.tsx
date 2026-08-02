@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getRestaurantFromHost } from "@/lib/site-utils";
+import { getPublicSiteOrigin, getRestaurantFromHost } from "@/lib/site-utils";
 import { generateMetadata as buildMetadata, generateRestaurantSchema } from "@/lib/seo";
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   }
 
-  return buildMetadata(restaurant);
+  return buildMetadata(restaurant, await getPublicSiteOrigin());
 }
 
 export default async function SiteLayout({
@@ -38,7 +38,7 @@ export default async function SiteLayout({
     );
   }
 
-  const schema = generateRestaurantSchema(restaurant);
+  const schema = generateRestaurantSchema(restaurant, await getPublicSiteOrigin());
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -48,7 +48,7 @@ export default async function SiteLayout({
       />
       <Navbar restaurantName={restaurant.name} />
       <main className="flex-1">{children}</main>
-      <Footer restaurantName={restaurant.name} address={restaurant.address} />
+      <Footer restaurantName={restaurant.name} address={restaurant.address} isDemo={restaurant.status === "demo"} />
       <AnalyticsTracker restaurantId={restaurant.id} />
     </div>
   );

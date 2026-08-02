@@ -14,7 +14,13 @@ interface ReservationFormData {
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
-export function ReservationForm({ restaurantId }: { restaurantId: string }) {
+export function ReservationForm({
+  restaurantId,
+  restaurantHasEmail,
+}: {
+  restaurantId: string;
+  restaurantHasEmail: boolean;
+}) {
   const [formData, setFormData] = useState<ReservationFormData>({
     customer_name: "",
     phone: "",
@@ -84,15 +90,19 @@ export function ReservationForm({ restaurantId }: { restaurantId: string }) {
 
   if (status === "success") {
     return (
-      <div className="max-w-md mx-auto p-8 bg-green-50 border border-green-200 rounded-lg text-center">
-        <svg className="w-12 h-12 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="mx-auto max-w-md border border-emerald-800/20 bg-emerald-50 p-6 text-center sm:p-8">
+        <svg className="mx-auto mb-4 h-12 w-12 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
-        <h3 className="text-xl font-bold text-green-800 mb-2">Reservation Requested!</h3>
-        <p className="text-green-700">We will contact you shortly to confirm your reservation.</p>
+        <h3 className="mb-2 font-serif text-2xl text-emerald-950">Request received</h3>
+        <p className="text-sm leading-6 text-emerald-900">
+          {restaurantHasEmail
+            ? "Your request has been recorded. Please wait for the restaurant to confirm availability."
+            : "Your request has been recorded for this demo. It has not been sent to the restaurant, so please contact them directly to confirm."}
+        </p>
         <button
           onClick={() => setStatus("idle")}
-          className="mt-6 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          className="mt-6 bg-stone-950 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-stone-800"
         >
           Make Another Reservation
         </button>
@@ -101,7 +111,12 @@ export function ReservationForm({ restaurantId }: { restaurantId: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-5">
+    <form onSubmit={handleSubmit} className="mx-auto max-w-md space-y-5">
+      {!restaurantHasEmail && (
+        <div className="border-l-2 border-amber-500 bg-amber-50 px-4 py-3 text-sm leading-6 text-stone-700">
+          Demo request only: this restaurant has no notification email configured. Submit to preview the flow, then contact the restaurant directly to confirm.
+        </div>
+      )}
       {status === "error" && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
           {errorMessage}
@@ -159,7 +174,7 @@ export function ReservationForm({ restaurantId }: { restaurantId: string }) {
       </div>
 
       {/* Date & Time row */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
             Date <span className="text-red-500">*</span>
@@ -230,9 +245,9 @@ export function ReservationForm({ restaurantId }: { restaurantId: string }) {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full bg-stone-950 py-3.5 font-semibold text-white transition-colors hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {status === "submitting" ? "Submitting..." : "Reserve a Table"}
+        {status === "submitting" ? "Submitting..." : "Send table request"}
       </button>
     </form>
   );

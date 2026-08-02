@@ -69,8 +69,8 @@ export default async function SiteHomePage() {
               <p className="text-sm leading-7 text-stone-600">{profile?.about || restaurant.description}</p>
               <p className="text-sm leading-7 text-stone-600">{profile?.bookingNote || restaurant.address}</p>
             </div>
-            <div className="mt-9 flex gap-10">
-              {(profile?.facts || []).slice(0, 3).map((fact) => <div key={fact}><strong className="block font-serif text-xl text-stone-950">{fact}</strong></div>)}
+            <div className="mt-9 flex flex-wrap gap-x-10 gap-y-4">
+              {(profile?.facts || []).slice(0, 3).map((fact) => <div key={fact} className="max-w-52"><strong className="block font-serif text-xl leading-snug text-stone-950">{fact}</strong></div>)}
             </div>
           </div>
         </div>
@@ -83,6 +83,11 @@ export default async function SiteHomePage() {
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-stone-600 sm:text-base">
             {profile ? "Dishes designed for sharing, made with seasonal Portuguese ingredients." : restaurant.description}
           </p>
+          {profile && (
+            <p className="mx-auto mt-3 max-w-2xl text-xs leading-5 text-stone-400">
+              Dish names are sourced from published listings. Unverified descriptions and AI-generated photography are illustrative demo content pending restaurant approval.
+            </p>
+          )}
         </div>
         <div className="mx-auto mt-14 max-w-6xl">
           <MenuSection items={featuredItems} currency={currency} />
@@ -92,7 +97,7 @@ export default async function SiteHomePage() {
             href="/menu"
             className="inline-flex border-b border-stone-900 pb-1 text-sm font-semibold text-stone-900 transition hover:text-amber-700"
           >
-            View the complete menu →
+            View selected dishes →
           </Link>
         </div>
       </section>

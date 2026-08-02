@@ -29,6 +29,13 @@ function spriteStyle(imageUrl: string): CSSProperties | null {
   };
 }
 
+function formatPrice(price: number): string {
+  return price.toLocaleString("en-IE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 export function MenuSection({
   items,
   currency = "$",
@@ -88,7 +95,7 @@ export function MenuSection({
                     <h4 className="font-serif text-lg font-semibold text-stone-900">{item.name}</h4>
                     {item.price > 0 && (
                       <span className="whitespace-nowrap text-sm font-semibold text-amber-700">
-                        {currency}{item.price.toFixed(0)}
+                        {currency}{formatPrice(item.price)}
                       </span>
                     )}
                   </div>

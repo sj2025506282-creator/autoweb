@@ -1,24 +1,19 @@
-import { apiFetch } from "@/lib/api-client";
 import type { MetadataRoute } from "next";
-import type { Restaurant } from "@autoweb/shared";
+import { getPublicSiteOrigin, getRestaurantFromHost } from "@/lib/site-utils";
 
 export const dynamic = "force-dynamic";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://autoweb.app";
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  try {
-    const restaurants = await apiFetch<Restaurant[]>('/api/restaurants');
-    const activeRestaurants = restaurants.filter(r => r.status === 'active');
+  const restaurant = await getRestaurantFromHost();
+  if (!restaurant) return [];
 
-    return activeRestaurants.map((r) => ({
-      url: `${BASE_URL}/${r.slug}`,
-      lastModified: r.updated_at,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    }));
-  } catch {
-    // Return empty sitemap if API is unavailable (e.g., during build)
-    return [];
-  }
+  const origin = await getPublicSiteOrigin();
+  const lastModified = restaurant.updated_at;
+
+  return [
+    { url: origin, lastModified, changeFrequency: "weekly", priority: 1 },
+    { url: `${origin}/menu`, lastModified, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${origin}/contact`, lastModified, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${origin}/reserve`, lastModified, changeFrequency: "monthly", priority: 0.7 },
+  ];
 }

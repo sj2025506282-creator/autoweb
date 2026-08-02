@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
+import { getPublicSiteOrigin } from "@/lib/site-utils";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://autoweb.app";
+export const dynamic = "force-dynamic";
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const origin = await getPublicSiteOrigin();
   return {
     rules: { userAgent: "*", allow: "/" },
-    sitemap: `${BASE_URL}/sitemap.xml`,
+    sitemap: `${origin}/sitemap.xml`,
   };
 }

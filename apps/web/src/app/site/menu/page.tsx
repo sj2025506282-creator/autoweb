@@ -1,11 +1,24 @@
-import { getRestaurantFromHost } from "@/lib/site-utils";
+import { getPublicSiteOrigin, getRestaurantFromHost } from "@/lib/site-utils";
 import { apiFetch } from "@/lib/api-client";
 import { MenuSection } from "@/components/site/menu-section";
 import type { MenuItem } from "@autoweb/shared";
 import { getDemoMenu, menuCurrency, NOSSA_CASA_MENU_SOURCE } from "@/lib/demo-menu";
+import type { Metadata } from "next";
+import { generatePageMetadata } from "@/lib/seo";
 
 interface MenuResponse {
   items: (MenuItem & { category_name: string })[];
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const restaurant = await getRestaurantFromHost();
+  if (!restaurant) return { title: "Menu Not Found", robots: { index: false } };
+
+  return generatePageMetadata(restaurant, await getPublicSiteOrigin(), {
+    path: "/menu",
+    title: "Menu",
+    description: `Explore the selected dishes and seasonal menu at ${restaurant.name}.`,
+  });
 }
 
 export default async function SiteMenuPage() {
@@ -24,9 +37,9 @@ export default async function SiteMenuPage() {
       {/* Page header */}
       <div className="text-center mb-12">
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-amber-700">Seasonal & rotating</p>
-        <h1 className="font-serif text-5xl text-stone-900 sm:text-7xl">Our Menu</h1>
+        <h1 className="font-serif text-5xl text-stone-900 sm:text-7xl">Selected Dishes</h1>
         <p className="mx-auto mt-5 max-w-xl text-stone-600">
-          The restaurant changes its menu regularly. Only currently verifiable published dishes are shown here.
+          A sample of published dishes. Availability, ingredients and prices may change with the season.
         </p>
         {usesVerifiedListing && (
           <p className="mx-auto mt-3 max-w-xl text-xs leading-5 text-stone-400">
