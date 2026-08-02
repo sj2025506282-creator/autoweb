@@ -30,11 +30,11 @@ export default async function SiteMenuPage() {
         </p>
         {usesVerifiedListing && (
           <p className="mx-auto mt-3 max-w-xl text-xs leading-5 text-stone-400">
-            Dish photography is AI-generated for this website demo and is illustrative only.
+            Dish names are sourced from published listings. Unverified descriptions and AI-generated photography are illustrative demo content pending restaurant approval.
           </p>
         )}
         <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">
-          {items.length} verified dishes · {categoryCount} section{categoryCount === 1 ? "" : "s"}
+          {items.length} sourced dishes · {categoryCount} section{categoryCount === 1 ? "" : "s"}
         </p>
         {usesVerifiedListing && (
           <a href={NOSSA_CASA_MENU_SOURCE} target="_blank" rel="noopener noreferrer"
